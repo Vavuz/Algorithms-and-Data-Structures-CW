@@ -3,7 +3,10 @@ This file is the main file for the Sudoku game
 @author Marco Vavassori
 @date 04/02/2022
 '''
-import Board
+
+from Board import Board
+from Cell import Cell
+
 
 def menu():
     '''Prints the game's menu'''

@@ -6,6 +6,7 @@ This file contains the Board class
 
 from Cell import Cell
 
+
 class Board():
     '''This class manages the game board'''
 
