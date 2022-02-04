@@ -6,6 +6,7 @@ This file is the main file for the Sudoku game
 
 from Board import Board
 from Cell import Cell
+import time
 
 
 def menu():
@@ -37,7 +38,7 @@ def startGame(width: int, height: int):
     '''Draws the sudoku board'''
     sudokuBoard: Board = Board(width, height)
     sudokuBoard.drawBoard()
-    print("done cmon")
+    input("Press a key to escape...")
 
 if __name__ == "__main__":
     menu()

@@ -16,8 +16,7 @@ class Board():
         self.height: int = height
         self.cells: list[Cell] = []
         for i in range(width * height):
-            print("hel chapo")
-            cell: Cell = Cell(1)
+            cell: Cell = Cell(i, 1)
             self.cells.append(cell)
     
     def drawBoard(self):
@@ -28,6 +27,7 @@ class Board():
             newLineCounter += 1
             if newLineCounter == self.width:
                 print("\n")
+                newLineCounter = 0
 
     def addCell(self, cell: Cell):
         '''Adds a cell to the list of cells'''

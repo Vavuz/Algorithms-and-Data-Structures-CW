@@ -10,13 +10,14 @@ from lib2to3.pgen2.token import NEWLINE
 class Cell():
     '''This class manages the cells'''
 
-    def __init__(self, correctNumber: int):
+    def __init__(self, id: int, correctNumber: int):
         '''Cell class constructor'''
+        self.id: int = id
         self.correctNumber: int = correctNumber
         self.currentNumber: int = None
 
     def drawCell(self):
-        print("diocane")
+        print("[ x ]", end="")
         
     def writeNumber(self, number: int):
         '''Changes the number that is currently displayed'''
