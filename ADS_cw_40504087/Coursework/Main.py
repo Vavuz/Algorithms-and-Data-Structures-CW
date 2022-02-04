@@ -17,6 +17,7 @@ def menu():
         try:
             choice: int = int(input("\n\nChoose the difficulty level! 1/2/3: "))
             print(choice)
+            # Whenever the input is an integer
             if (choice == 1):
                 startGame(3, 3)
                 break
@@ -28,6 +29,7 @@ def menu():
                 break
             else:
                 print(str(choice) + " is not an option! Try again!")
+        # Whenever the input is not an integer
         except:
             print("That is not a choice! Try again!")
 
