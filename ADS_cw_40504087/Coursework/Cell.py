@@ -4,6 +4,9 @@ This file contains the Cell class
 @date 04/02/2022
 '''
 
+from lib2to3.pgen2.token import NEWLINE
+
+
 class Cell():
     '''This class manages the cells'''
 
@@ -12,6 +15,9 @@ class Cell():
         self.correctNumber: int = correctNumber
         self.currentNumber: int = None
 
+    def drawCell(self):
+        print("diocane")
+        
     def writeNumber(self, number: int):
         '''Changes the number that is currently displayed'''
         self.currentNumber = number

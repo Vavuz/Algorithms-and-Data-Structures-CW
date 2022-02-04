@@ -14,7 +14,20 @@ class Board():
         '''Board class constructor'''
         self.width: int = width
         self.height: int = height
-        self.cells: list[Cell] = None
+        self.cells: list[Cell] = []
+        for i in range(width * height):
+            print("hel chapo")
+            cell: Cell = Cell(1)
+            self.cells.append(cell)
+    
+    def drawBoard(self):
+        '''Draws the board'''
+        newLineCounter: int = 0
+        for cell in self.cells:
+            cell.drawCell()
+            newLineCounter += 1
+            if newLineCounter == self.width:
+                print("\n")
 
     def addCell(self, cell: Cell):
         '''Adds a cell to the list of cells'''

@@ -19,13 +19,13 @@ def menu():
             print(choice)
             # Whenever the input is an integer
             if (choice == 1):
-                startGame(3, 3)
+                startGame(4, 4)
                 break
             elif choice == 2:
                 startGame(9, 9)
                 break
             elif choice == 3:
-                startGame(12, 12)
+                startGame(16, 16)
                 break
             else:
                 print(str(choice) + " is not an option! Try again!")
@@ -34,7 +34,9 @@ def menu():
             print("That is not a choice! Try again!")
 
 def startGame(width: int, height: int):
+    '''Draws the sudoku board'''
     sudokuBoard: Board = Board(width, height)
+    sudokuBoard.drawBoard()
     print("done cmon")
 
 if __name__ == "__main__":
