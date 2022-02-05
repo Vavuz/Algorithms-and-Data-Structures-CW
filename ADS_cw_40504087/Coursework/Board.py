@@ -21,13 +21,18 @@ class Board():
     
     def drawBoard(self):
         '''Draws the board'''
-        newLineCounter: int = 0
+        print("\n" + "-" * (self.width * 5))
+        newEndLineCounter: int = 0
+        linesCounter: int = 0
         for cell in self.cells:
             cell.drawCell()
-            newLineCounter += 1
-            if newLineCounter == self.width:
+            newEndLineCounter += 1
+            if newEndLineCounter == self.width and linesCounter < self.width:
                 print("\n")
-                newLineCounter = 0
+                newEndLineCounter = 0
+            elif linesCounter == self.width:
+                break
+        print("-" * (self.width * 5))
 
     def addCell(self, cell: Cell):
         '''Adds a cell to the list of cells'''
