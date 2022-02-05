@@ -6,11 +6,16 @@ This file is the main file for the Sudoku game
 
 from Board import Board
 from Cell import Cell
+import time
 
 
 def menu():
     '''Prints the game's menu'''
-    print("Welcome to Vavassudoku!")
+    print("\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _  \n"
+          " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | | \n"
+          "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| | \n"
+          "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\\__,_| \n")
+    print("\t\t    Welcome to Vavassudoku!")
 
     # Difficulty level choice
     while True:
@@ -33,7 +38,18 @@ def menu():
             print("That is not a choice! Try again!")
 
 def rules():
-    print("le regole")
+    print("\n\n▬▬ι═══════   The rules   ═══════ι▬▬")
+    time.sleep(0.5)
+    print(" The rules are very simple: ")
+    time.sleep(1.5)
+    print("   To insert a number into the sudoku table you will need to provide the console\n",
+          "  with a coordinate (e.g. B3, e7, H9) and a number (e.g. 1, 5, 12)\n")
+    time.sleep(1.5)
+    print("   Your input should look like that:   F4,2\n")
+    time.sleep(1.5)
+    print("Now that you are aware of the rules you can start playing!\n",
+        "▬▬ι═════════════════════ι▬▬")
+    time.sleep(1.5)
 
 def startGame(width: int, height: int):
     '''Draws the sudoku board'''
@@ -48,9 +64,8 @@ def movementLoop(sudokuBoard: Board, width: int):
         try:
             move: tuple = tuple(input("What is your next move?: ").split(','))
             if moveValidation(move, width):
-                # numberInsertion()
+                sudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], width)
                 sudokuBoard.drawBoard()
-                print("movimento valido")
             else:
                 print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
         except:
@@ -59,11 +74,11 @@ def movementLoop(sudokuBoard: Board, width: int):
 def moveValidation(move: tuple, width: int) -> bool:
     '''Validates the user move'''
     try:
-        print(ord(move[0][:1]))
+        # Checking that the coordinate exists (letter bit)
         if (ord('A') <= ord(move[0][:1]) <= (ord('A') + width)) or (ord('a') <= ord(move[0][:1]) <= (ord('a') + width)):
-            print(int(move[0][1:]))
+            # Checking that the coordinate exists (number bit)
             if 1 <= int(move[0][1:]) <= width:
-                print(int(move[1]))
+                # Checking that the number to insert is in the available range
                 if 1 <= int(move[1]) <= width:
                     return True
     except:
