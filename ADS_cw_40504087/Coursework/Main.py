@@ -7,15 +7,22 @@ This file is the main file for the Sudoku game
 from Board import Board
 from Cell import Cell
 import time
+import os
 
+
+def theme():
+    '''Prints the game's name'''
+    print("\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n"
+          " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | |      |\n"
+          "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| |      |\n"
+          "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\\__,_|       |\n",
+          "                                                                  |")
 
 def menu():
     '''Prints the game's menu'''
-    print("\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _  \n"
-          " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | | \n"
-          "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| | \n"
-          "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\\__,_| \n")
-    print("\t\t    Welcome to Vavassudoku!")
+    theme()
+    print("\t\t    Welcome to Vavassudoku!                        |\n",
+    "-" * 67)
 
     # Difficulty level choice
     while True:
@@ -23,13 +30,13 @@ def menu():
             choice: int = int(input("\n\nChoose the difficulty level! 1/2/3: "))
             # Whenever the input is an integer
             if (choice == 1):
-                startGame(4, 4)
+                startGame(4, 4, choice)
                 break
             elif choice == 2:
-                startGame(9, 9)
+                startGame(9, 9, choice)
                 break
             elif choice == 3:
-                startGame(16, 16)
+                startGame(16, 16, choice)
                 break
             else:
                 print(str(choice) + " is not an option! Try again!")
@@ -47,25 +54,28 @@ def rules():
     time.sleep(1.5)
     print("   Your input should look like that:   F4,2\n")
     time.sleep(1.5)
-    print("Now that you are aware of the rules you can start playing!\n",
-        "▬▬ι═════════════════════ι▬▬")
+    print(" Now that you are aware of the rules you can start playing!\n",
+        "▬▬ι═══════════════════════════ι▬▬")
     time.sleep(1.5)
 
-def startGame(width: int, height: int):
+def startGame(width: int, height: int, choice: int):
     '''Draws the sudoku board'''
-    rules()
+    #rules()
     sudokuBoard: Board = Board(width, height)
-    sudokuBoard.drawBoard()
-    movementLoop(sudokuBoard, width)
+    sudokuBoard.drawBoard(choice)
+    movementLoop(sudokuBoard, width, choice)
 
-def movementLoop(sudokuBoard: Board, width: int):
+def movementLoop(sudokuBoard: Board, width: int, choice: int):
     '''Applies the user moves'''
     while True:
         try:
-            move: tuple = tuple(input("What is your next move?: ").split(','))
+            print("porca troia")
+            move: tuple = tuple(input("\nWhat is your next move?: ").split(','))
             if moveValidation(move, width):
                 sudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], width)
-                sudokuBoard.drawBoard()
+                os.system('cls')
+                theme()
+                sudokuBoard.drawBoard(choice)
             else:
                 print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
         except:
@@ -74,12 +84,18 @@ def movementLoop(sudokuBoard: Board, width: int):
 def moveValidation(move: tuple, width: int) -> bool:
     '''Validates the user move'''
     try:
+        print("ciaociaociao")
         # Checking that the coordinate exists (letter bit)
+        print(move[0][:1])
+        print(ord(move[0][:1]))
         if (ord('A') <= ord(move[0][:1]) <= (ord('A') + width)) or (ord('a') <= ord(move[0][:1]) <= (ord('a') + width)):
+            print("il")
             # Checking that the coordinate exists (number bit)
             if 1 <= int(move[0][1:]) <= width:
+                print("dio")
                 # Checking that the number to insert is in the available range
                 if 1 <= int(move[1]) <= width:
+                    print("cane")
                     return True
     except:
         return False

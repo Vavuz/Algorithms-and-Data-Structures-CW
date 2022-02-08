@@ -4,8 +4,9 @@ This file contains the Board class
 @date 04/02/2022
 '''
 
+from sys import intern
 from Cell import Cell
-
+import math
 
 class Board():
     '''This class manages the game board'''
@@ -44,21 +45,38 @@ class Board():
                                   'L' : 12
                                 }
     
-    def drawBoard(self):
+    def drawBoard(self, choice: int):
         '''Draws the board'''
-        line: str = "-" * (self.width * 5)
-        print("\n" + line)
+        lineLength: int = self.width * 5 + choice + 2
+        topBottomLine: str = '-' * lineLength
+        internalLine: str = ""
+        for i in range(lineLength):
+            if i == 0:
+                internalLine += '|'
+            elif (i % (self.width * 3)) == 0:
+                internalLine += '|'
+            else:
+                internalLine += '-'
+        print(internalLine)
+        print("\n" + "\t" + topBottomLine)
+        print("\t", end="")
         newEndLineCounter: int = 0
-        linesCounter: int = 0
+        linesCounter: int = 1
         for cell in self.cells:
+            if (newEndLineCounter % math.sqrt(self.width) == 0):
+                print("|", end="")
             cell.drawCell()
             newEndLineCounter += 1
-            if newEndLineCounter == self.width and linesCounter < self.width:
-                print("\n")
+            if newEndLineCounter == self.width:
+                if (linesCounter % math.sqrt(self.width) == 0 and linesCounter != 0):
+                    print("|\n", end="")
+                    print("\t", topBottomLine)
+                    print("\t", end="")
+                else:
+                    print("|\n")
+                    print("\t", end="")
                 newEndLineCounter = 0
-            elif linesCounter == self.width:
-                break
-        print(line)
+                linesCounter += 1
     
     def boardUpdate(self, x: str, y: str, number: int, width: int):
         for cell in self.cells:
