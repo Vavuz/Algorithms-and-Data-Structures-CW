@@ -4,7 +4,6 @@ This file contains the Board class
 @date 04/02/2022
 '''
 
-from sys import intern
 from Cell import Cell
 import math
 
@@ -47,17 +46,20 @@ class Board():
     
     def drawBoard(self, choice: int):
         '''Draws the board'''
-        lineLength: int = self.width * 5 + choice + 2
+        #lineLength: int = self.width * 5 + (7 + 5 * choice)
+        lineLength: int = self.width * 5 + (choice + 2)
         topBottomLine: str = '-' * lineLength
         internalLine: str = ""
-        for i in range(lineLength):
-            if i == 0:
+        # The horizontal lines are created
+        for i in range(0, lineLength):
+            if i == 0 or i == lineLength - 1:
                 internalLine += '|'
-            elif (i % (self.width * 3)) == 0:
+            elif (i % (6 + 5 * choice)) == 0:
                 internalLine += '|'
             else:
                 internalLine += '-'
-        print(internalLine)
+        
+        # Board printing
         print("\n" + "\t" + topBottomLine)
         print("\t", end="")
         newEndLineCounter: int = 0

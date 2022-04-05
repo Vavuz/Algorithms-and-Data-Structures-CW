@@ -1,0 +1,12 @@
+12, 17, 22
+
+----------------------
+
+
+
+
+numbero di spazi per le righe verticali
+
+
+
+- prima di submittare prova su computer senza libreria e vedi cosa serve

@@ -69,7 +69,6 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
     '''Applies the user moves'''
     while True:
         try:
-            print("porca troia")
             move: tuple = tuple(input("\nWhat is your next move?: ").split(','))
             if moveValidation(move, width):
                 sudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], width)
@@ -84,18 +83,12 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
 def moveValidation(move: tuple, width: int) -> bool:
     '''Validates the user move'''
     try:
-        print("ciaociaociao")
         # Checking that the coordinate exists (letter bit)
-        print(move[0][:1])
-        print(ord(move[0][:1]))
         if (ord('A') <= ord(move[0][:1]) <= (ord('A') + width)) or (ord('a') <= ord(move[0][:1]) <= (ord('a') + width)):
-            print("il")
             # Checking that the coordinate exists (number bit)
             if 1 <= int(move[0][1:]) <= width:
-                print("dio")
                 # Checking that the number to insert is in the available range
                 if 1 <= int(move[1]) <= width:
-                    print("cane")
                     return True
     except:
         return False

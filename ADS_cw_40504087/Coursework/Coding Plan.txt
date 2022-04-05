@@ -1,0 +1,10 @@
+- Create difficulty easy, medium and difficult. The first one is a 4*4, the second one a 6*6 and the third one a 9*9 grid.
+- The Cell has 2 attributes, value (what number it contains) and overwritable (if it can be overwritten)
+- add a cute little 2x2 grid in the game tutorial for the coordinates
+
+
+--------
+
+EXTRA:
+- add quit
+- add save and quit
