@@ -4,6 +4,15 @@ This file contains the Cell class
 @date 04/02/2022
 '''
 
+from enum import Enum, auto
+
+
+class CellStatus(Enum):
+   SHOWN = auto()            # number shown
+   NO_GUESS = auto()         # not attempted
+   CORRECT_GUESS = auto()    # correct guess
+   WRONG_GUESS = auto()      # wrong guess
+
 class Cell():
     '''This class manages the cells'''
 
