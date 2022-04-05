@@ -81,6 +81,7 @@ class Board():
                 linesCounter += 1
     
     def boardUpdate(self, x: str, y: str, number: int, width: int):
+        '''Updates the board'''
         for cell in self.cells:
             if cell.id == (self.coordinates[x] + (width * (int(y) - 1))):
                 cell.writeNumber(number)
