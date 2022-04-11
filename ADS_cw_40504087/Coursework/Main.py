@@ -4,6 +4,7 @@ This file is the main file for the Sudoku game
 @date 04/02/2022
 '''
 
+from tracemalloc import start
 from Board import Board
 from Cell import Cell
 import time
@@ -15,13 +16,13 @@ def theme():
     print("\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n"
           " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | |      |\n"
           "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| |      |\n"
-          "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\\__,_|       |\n",
+          "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\__,__|      |\n",
           "                                                                  |")
 
 def menu():
     '''Prints the game's menu'''
     theme()
-    print("\t\t    Welcome to Vavassudoku!                        |\n",
+    print("\t\t\tWelcome to Vavassudoku!" + 20 * ' ' + "|\n",
     "-" * 67)
     # rules()
 
@@ -52,7 +53,7 @@ def rules():
     print("   To insert a number into the sudoku table you will need to provide the console\n",
           "  with a coordinate (e.g. 'B3', 'e7', 'H9'), a comma ',' and a number (e.g. '1', '5', '8')\n")
     time.sleep(1.5)
-    print("   Your input should look like that:   F4,2\n")
+    print("   Your input should look like that:   D4,2\n")
     time.sleep(1.5)
     print("   Whenever you want to read the rules, input 'R'\n")
     time.sleep(1.5)
@@ -63,7 +64,6 @@ def rules():
 
 def startGame(width: int, height: int, choice: int):
     '''Draws the sudoku board'''
-    #rules()
     sudokuBoard: Board = Board(width, height)
     sudokuBoard.drawBoard(choice)
     movementLoop(sudokuBoard, width, choice)
@@ -81,14 +81,19 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
                 break
             else:
                 moveTuple: tuple = tuple(move.split(','))
+                # If the move is of valid type the program can proceed to check it in deeper detail
                 if moveValidation(moveTuple, width):
-                    sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
-                    os.system('cls')
-                    theme()
-                    sudokuBoard.drawBoard(choice)
+                    if uniquenessValidation(sudokuBoard, moveTuple, width):
+                        sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
+                        os.system('cls')
+                        theme()
+                        sudokuBoard.drawBoard(choice)
+                    else:
+                        print("NON VABENE DIOCAAAAAAAAA")
                 else:
                     print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
         except:
+            print("EXCEPT")
             print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
 
 
@@ -107,7 +112,40 @@ def moveValidation(moveTuple: tuple, width: int) -> bool:
     return False
 
 
+def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool:
+    '''Validates that the user's move does not interfere with other numbers'''
+    if (width == 9):
+        idsToCheck: list[int] = []
+        currentId: int = startingHorizontalId + int(moveTuple[0][1:])
+
+        # Adding horizontal cells
+        startingHorizontalId: int = (int(moveTuple[0][1:]) - 1) * width
+        print("Starting horizontal is:", str(startingHorizontalId))
+        for id in range(startingHorizontalId, startingHorizontalId + width):
+            idsToCheck.append(id)
+        idsToCheck.remove(currentId)    
+
+        print("ids to check aree:", idsToCheck)
+        time.sleep(100)    
+
+        # Adding vertical cells
+
+        # Adding block cells
+
+        # Total check
+        idsToCheck.sort()
+        for cell in sudokuBoard.cells:
+            if (idsToCheck.count(cell.id) > 0):
+                if (cell.currentNumber == int(moveTuple[0][1:])):
+                    return False
+        return True        
+    else:
+        pass
+
+
+
 
 if __name__ == "__main__":
+    #os.system("color 1f")
     menu()
     input("\n\n Enter key to escape...")

@@ -5,7 +5,10 @@ This file contains the Board class
 '''
 
 from Cell import Cell
+from colorama import Fore, init
 import math
+import random
+
 
 class Board():
     '''This class manages the game board'''
@@ -15,6 +18,8 @@ class Board():
         self.width: int = width
         self.height: int = height
         self.cells: list[Cell] = []
+        #self.color = random.choice(dict(Fore.__dict__.items()).keys())
+        init(autoreset=True)
         for i in range(1, (width * height) + 1):
             cell: Cell = Cell(i, 1)
             self.addCell(cell)
@@ -36,17 +41,10 @@ class Board():
                                   'H' : 8,
                                   'i' : 9,
                                   'I' : 9,
-                                  'j' : 10,
-                                  'J' : 10,
-                                  'k' : 11,
-                                  'K' : 11,
-                                  'l' : 12,
-                                  'L' : 12
                                 }
     
     def drawBoard(self, choice: int):
         '''Draws the board'''
-        #lineLength: int = self.width * 5 + (7 + 5 * choice)
         lineLength: int = self.width * 5 + (choice + 2)
         topBottomLine: str = '-' * lineLength
         internalLine: str = ""
@@ -60,22 +58,25 @@ class Board():
                 internalLine += '-'
         
         # Board printing
-        print("\n" + "\t" + topBottomLine)
+        print("\n" + "\t" + Fore.MAGENTA + topBottomLine)
         print("\t", end="")
         newEndLineCounter: int = 0
         linesCounter: int = 1
         for cell in self.cells:
             if (newEndLineCounter % math.sqrt(self.width) == 0):
-                print("|", end="")
+                print(Fore.MAGENTA + "|", end="")
             cell.drawCell()
             newEndLineCounter += 1
             if newEndLineCounter == self.width:
-                if (linesCounter % math.sqrt(self.width) == 0 and linesCounter != 0):
-                    print("|\n", end="")
-                    print("\t", topBottomLine)
+                if (linesCounter % math.sqrt(self.width) == 0 and linesCounter != 0 and linesCounter != self.height):
+                    print(Fore.MAGENTA + "|\n", end="")
+                    print("\t" + Fore.MAGENTA + internalLine)
                     print("\t", end="")
+                elif (linesCounter == self.height):
+                    print(Fore.MAGENTA + "|\n", end="")
+                    print("\t" + Fore.MAGENTA + topBottomLine)
                 else:
-                    print("|\n")
+                    print(Fore.MAGENTA + "|\n")
                     print("\t", end="")
                 newEndLineCounter = 0
                 linesCounter += 1

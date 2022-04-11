@@ -5,13 +5,17 @@ This file contains the Cell class
 '''
 
 from enum import Enum, auto
+from colorama import Fore
+from termcolor import colored
+
 
 
 class CellStatus(Enum):
-   SHOWN = auto()            # number shown
-   NO_GUESS = auto()         # not attempted
-   CORRECT_GUESS = auto()    # correct guess
-   WRONG_GUESS = auto()      # wrong guess
+    '''Status of a cell'''
+    SHOWN = auto()            # number shown
+    NO_GUESS = auto()         # not attempted
+    CORRECT_GUESS = auto()    # correct guess
+    WRONG_GUESS = auto()      # wrong guess
 
 class Cell():
     '''This class manages the cells'''
@@ -19,7 +23,7 @@ class Cell():
     def __init__(self, id: int, correctNumber: int):
         '''Cell class constructor'''
         self.id: int = id
-        self.__status: CellStatus = auto()
+        self.status: CellStatus = auto()
         self.correctNumber: int = correctNumber
         self.currentNumber: int = None
 
@@ -28,7 +32,7 @@ class Cell():
         if self.currentNumber == None:
             print("[   ]", end="")
         else:
-            print("[ " + str(self.currentNumber) + " ]", end="")
+            print("[ " + colored(str(self.currentNumber), 'green') + " ]", end="")
         
     def writeNumber(self, number: int):
         '''Changes the number that is currently displayed'''
@@ -44,8 +48,8 @@ class Cell():
 
     def getCellStatus(self) -> CellStatus:
         '''Returns the cell's status'''
-        return self.__status
+        return self.status
     
     def setCellStatus(self, status: CellStatus):
         '''Sets the cell's status'''
-        self.__status = status   
+        self.status = status   

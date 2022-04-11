@@ -1,0 +1,9 @@
+- noticed how the colored() function works way faster then using Fore
+
+
+
+POSSIBLE PROGRAM FEATURES:
+- timer
+- possibility do undo and redo movements
+- possibility to save a completed game if you want
+- possibility to save an uncompleted game if you want
