@@ -25,11 +25,11 @@ class Cell():
         self.id: int = id
         self.status: CellStatus = auto()
         self.correctNumber: int = correctNumber
-        self.currentNumber: int = None
+        self.currentNumber: int = 0
 
     def drawCell(self):
         '''Draws a cell'''
-        if self.currentNumber == None:
+        if self.currentNumber == 0:
             print("[   ]", end="")
         else:
             print("[ " + colored(str(self.currentNumber), 'green') + " ]", end="")

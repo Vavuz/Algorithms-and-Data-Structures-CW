@@ -4,6 +4,7 @@ This file is the main file for the Sudoku game
 @date 04/02/2022
 '''
 
+from shutil import move
 from tracemalloc import start
 from Board import Board
 from Cell import Cell
@@ -80,20 +81,20 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
             elif (move == 'Q' or move == 'q'):
                 break
             else:
-                moveTuple: tuple = tuple(move.split(','))
+                moveTuple: tuple = tuple(move.replace(' ', '').split(','))
                 # If the move is of valid type the program can proceed to check it in deeper detail
                 if moveValidation(moveTuple, width):
+                    # Checking that no number interferes
                     if uniquenessValidation(sudokuBoard, moveTuple, width):
                         sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
                         os.system('cls')
                         theme()
                         sudokuBoard.drawBoard(choice)
                     else:
-                        print("NON VABENE DIOCAAAAAAAAA")
+                        print("This number is already present in this row/column/block!")
                 else:
                     print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
         except:
-            print("EXCEPT")
             print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
 
 
@@ -116,17 +117,14 @@ def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bo
     '''Validates that the user's move does not interfere with other numbers'''
     if (width == 9):
         idsToCheck: list[int] = []
-        currentId: int = startingHorizontalId + int(moveTuple[0][1:])
 
         # Adding horizontal cells
         startingHorizontalId: int = (int(moveTuple[0][1:]) - 1) * width
-        print("Starting horizontal is:", str(startingHorizontalId))
+        currentId: int = startingHorizontalId + sudokuBoard.coordinates[moveTuple[0][:1]] - 1
+        
         for id in range(startingHorizontalId, startingHorizontalId + width):
             idsToCheck.append(id)
         idsToCheck.remove(currentId)    
-
-        print("ids to check aree:", idsToCheck)
-        time.sleep(100)    
 
         # Adding vertical cells
 
@@ -134,12 +132,17 @@ def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bo
 
         # Total check
         idsToCheck.sort()
+
         for cell in sudokuBoard.cells:
-            if (idsToCheck.count(cell.id) > 0):
-                if (cell.currentNumber == int(moveTuple[0][1:])):
+            if cell.id == idsToCheck[0]:
+                idsToCheck = idsToCheck[1:]
+                if str(cell.currentNumber) == moveTuple[1]:
                     return False
-        return True        
+            if len(idsToCheck) == 0:
+                break
+        return True
     else:
+        # For width of 4
         pass
 
 
