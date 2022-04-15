@@ -115,35 +115,44 @@ def moveValidation(moveTuple: tuple, width: int) -> bool:
 
 def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool:
     '''Validates that the user's move does not interfere with other numbers'''
-    if (width == 9):
-        idsToCheck: list[int] = []
+    idsToCheck: list[int] = []
 
-        # Adding horizontal cells
-        startingHorizontalId: int = (int(moveTuple[0][1:]) - 1) * width
-        currentId: int = startingHorizontalId + sudokuBoard.coordinates[moveTuple[0][:1]] - 1
+    # Adding horizontal cells
+    startingHorizontalId: int = (int(moveTuple[0][1:]) - 1) * width
+    
+    for id in range(startingHorizontalId, startingHorizontalId + width):
+        idsToCheck.append(id)
+
+    # Adding vertical cells
+    startingverticalId: int = sudokuBoard.coordinates[moveTuple[0][:1]] - 1
+    for i in range(width):
+        idsToCheck.append(startingverticalId)
+        startingverticalId += width
         
-        for id in range(startingHorizontalId, startingHorizontalId + width):
-            idsToCheck.append(id)
-        idsToCheck.remove(currentId)    
+    # Adding block cells
 
-        # Adding vertical cells
-
-        # Adding block cells
-
-        # Total check
-        idsToCheck.sort()
-
-        for cell in sudokuBoard.cells:
-            if cell.id == idsToCheck[0]:
-                idsToCheck = idsToCheck[1:]
-                if str(cell.currentNumber) == moveTuple[1]:
-                    return False
-            if len(idsToCheck) == 0:
-                break
-        return True
-    else:
-        # For width of 4
-        pass
+    # Removing duplicates and the cell that we are filling in
+    idsToCheck = list(dict.fromkeys(idsToCheck))
+    currentId: int = startingHorizontalId + sudokuBoard.coordinates[moveTuple[0][:1]] - 1
+    idsToCheck.remove(currentId)
+    
+    # Total check
+    idsToCheck.sort()
+    print("ids to check are:", idsToCheck)
+    
+    for cell in sudokuBoard.cells:
+        print("\n-----------------\nCurrently checking cell no:", cell.id)
+        if cell.id == idsToCheck[0]:
+            print("This cell needs to be checked")
+            idsToCheck = idsToCheck[1:]
+            if str(cell.currentNumber) == moveTuple[1]:
+                print("MATCH FOUND")
+                input("waiting for input...")
+                return False
+        if len(idsToCheck) == 0:
+            break
+    input("waiting for input...")    
+    return True
 
 
 
