@@ -119,7 +119,8 @@ def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bo
 
     # Adding horizontal cells
     startingHorizontalId: int = (int(moveTuple[0][1:]) - 1) * width
-    
+    currentId: int = startingHorizontalId + sudokuBoard.coordinates[moveTuple[0][:1]] - 1
+
     for id in range(startingHorizontalId, startingHorizontalId + width):
         idsToCheck.append(id)
 
@@ -130,28 +131,60 @@ def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bo
         startingverticalId += width
         
     # Adding block cells
+    startingBlockId: int = currentId
+    if width == 9:
+        # If we are working with the 9x9 grid
+        while True:
+            if 0 <= startingBlockId < 9 or 27 <= startingBlockId < 36 or 54 <= startingBlockId < 63:
+                # This cell is in the first column of the block
+                if startingBlockId % 3 == 0:
+                    # This cell is the first cell of the block
+                    break
+                else:
+                    startingBlockId -= 1
+            else:
+                startingBlockId -= 9
+        # The block cell's ids are added        
+        for i in range(3):
+            idsToCheck.append(startingBlockId)
+            for j in range(1, 3):
+                idsToCheck.append(startingBlockId + j)
+            startingBlockId += 9
+    else:
+        # if we are working with the 4x4 grid
+        while True:
+            if 0 <= startingBlockId < 4 or 8 <= startingBlockId < 12:
+                # This cell is in the first column of the block
+                if startingBlockId % 2 == 0:
+                    # This cell is the first cell of the block
+                    break
+                else:
+                    startingBlockId -= 1
+            else:
+                startingBlockId -= 4
+        # The block cell's ids are added             
+        for i in range(2):
+            idsToCheck.append(startingBlockId)
+            for j in range(2):
+                idsToCheck.append(startingBlockId + j)
+            startingBlockId += 4
 
     # Removing duplicates and the cell that we are filling in
     idsToCheck = list(dict.fromkeys(idsToCheck))
-    currentId: int = startingHorizontalId + sudokuBoard.coordinates[moveTuple[0][:1]] - 1
     idsToCheck.remove(currentId)
     
     # Total check
     idsToCheck.sort()
-    print("ids to check are:", idsToCheck)
     
     for cell in sudokuBoard.cells:
-        print("\n-----------------\nCurrently checking cell no:", cell.id)
+        # The cells that have one of the ids in the idsToCheck list are checked
         if cell.id == idsToCheck[0]:
-            print("This cell needs to be checked")
             idsToCheck = idsToCheck[1:]
             if str(cell.currentNumber) == moveTuple[1]:
-                print("MATCH FOUND")
-                input("waiting for input...")
+                # If the is an interference false is returned
                 return False
         if len(idsToCheck) == 0:
             break
-    input("waiting for input...")    
     return True
 
 
