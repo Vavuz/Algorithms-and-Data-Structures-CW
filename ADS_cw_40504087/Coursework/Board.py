@@ -20,7 +20,7 @@ class Board():
         self.cells: list[Cell] = []
         #self.color = random.choice(dict(Fore.__dict__.items()).keys())
         init(autoreset=True)
-        for i in range(1, (width * height) + 1):
+        for i in range(0, (width * height)):
             cell: Cell = Cell(i, 1)
             self.addCell(cell)
         self.coordinates: dict = {'a' : 1,
@@ -84,7 +84,7 @@ class Board():
     def boardUpdate(self, x: str, y: str, number: int, width: int):
         '''Updates the board'''
         for cell in self.cells:
-            if cell.id == (self.coordinates[x] + (width * (int(y) - 1))):
+            if cell.id == (self.coordinates[x] + (width * (int(y) - 1)) - 1):
                 cell.writeNumber(number)
                 break
 
