@@ -58,6 +58,8 @@ def rules():
     time.sleep(1.5)
     print("   Whenever you want to read the rules, input 'R'\n")
     time.sleep(1.5)
+    print("   Whenever you want to quit, input 'Q'\n")
+    time.sleep(1.5)
     print(" Now that you are aware of the rules you can start playing!\n",
         "▬▬ι═══════════════════════════ι▬▬")
     time.sleep(1.5)

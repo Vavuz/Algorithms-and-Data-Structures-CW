@@ -6,6 +6,7 @@ This file contains the Board class
 
 from Cell import Cell
 from colorama import Fore, init
+from termcolor import colored
 import math
 import random
 
@@ -58,23 +59,35 @@ class Board():
                 internalLine += '-'
         
         # Board printing
-        print("\n" + "\t" + Fore.MAGENTA + topBottomLine)
+        print("\n" + "\t  " + Fore.MAGENTA + topBottomLine)
         print("\t", end="")
         newEndLineCounter: int = 0
         linesCounter: int = 1
+        verticalCoordsCounter: int = math.sqrt(self.width)
+        verticalCoords: int = 1
+        # Every cell needs to be printed
         for cell in self.cells:
             if (newEndLineCounter % math.sqrt(self.width) == 0):
-                print(Fore.MAGENTA + "|", end="")
-            cell.drawCell()
+                # When we get to a new  line
+                if verticalCoordsCounter == math.sqrt(self.width):
+                    print(colored(str(verticalCoords), 'yellow') + " " + Fore.MAGENTA + "|", end="")
+                    verticalCoordsCounter = 1
+                    verticalCoords += 1
+                # When we are in the middle of the line
+                else:
+                    print(Fore.MAGENTA + "|", end="")
+                    verticalCoordsCounter += 1
+            cell.drawCell()    # cell printing
             newEndLineCounter += 1
+            # Divider lines printing
             if newEndLineCounter == self.width:
                 if (linesCounter % math.sqrt(self.width) == 0 and linesCounter != 0 and linesCounter != self.height):
                     print(Fore.MAGENTA + "|\n", end="")
-                    print("\t" + Fore.MAGENTA + internalLine)
+                    print("\t  " + Fore.MAGENTA + internalLine)
                     print("\t", end="")
                 elif (linesCounter == self.height):
                     print(Fore.MAGENTA + "|\n", end="")
-                    print("\t" + Fore.MAGENTA + topBottomLine)
+                    print("\t  " + Fore.MAGENTA + topBottomLine)
                 else:
                     print(Fore.MAGENTA + "|\n")
                     print("\t", end="")
