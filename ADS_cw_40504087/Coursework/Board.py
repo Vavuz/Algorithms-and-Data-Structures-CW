@@ -59,7 +59,21 @@ class Board():
                 internalLine += '-'
         
         # Board printing
-        print("\n" + "\t  " + Fore.MAGENTA + topBottomLine)
+        horizontalCoords: str = ""
+        horizontalCoordsCounter: int = 0
+        keysList = list(self.coordinates.keys())
+        # The horizontal coordinates are written from the dictionary of coordinates
+        for i in range(1, self.width * 2, 2):
+            horizontalCoordsCounter += 1
+            horizontalCoords += keysList[i]
+            if horizontalCoordsCounter == math.sqrt(self.width):
+                horizontalCoords += "     "
+                horizontalCoordsCounter = 0
+            else:
+                horizontalCoords += "    "
+        print("\n\t     " + colored(horizontalCoords, 'yellow'))
+
+        print("\t  " + Fore.MAGENTA + topBottomLine)
         print("\t", end="")
         newEndLineCounter: int = 0
         linesCounter: int = 1
