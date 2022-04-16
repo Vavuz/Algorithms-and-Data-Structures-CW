@@ -44,7 +44,7 @@ class Board():
                                   'I' : 9,
                                 }
     
-    def drawBoard(self, choice: int):
+    def drawBoard(self, choice: int, sudokuTimer: int):
         '''Draws the board'''
         lineLength: int = self.width * 5 + (choice + 2)
         topBottomLine: str = '-' * lineLength
@@ -57,7 +57,7 @@ class Board():
                 internalLine += '|'
             else:
                 internalLine += '-'
-        
+
         # Board printing
         horizontalCoords: str = ""
         horizontalCoordsCounter: int = 0
@@ -70,9 +70,16 @@ class Board():
                 horizontalCoords += "     "
                 horizontalCoordsCounter = 0
             else:
-                horizontalCoords += "    "
-        print("\n\t     " + colored(horizontalCoords, 'yellow'))
+                horizontalCoords += "    "      
+        print("\n\t     " + colored(horizontalCoords, 'yellow'), end="")
 
+        # Print timer
+        seconds: str = str(sudokuTimer % 60)
+        if (int(seconds) < 10):
+            seconds = '0' + seconds
+        timeLeft: str = str(round(sudokuTimer // 60)) + ':' + str(seconds)
+        print("\t\t\t\tTime left: " + timeLeft)
+        
         print("\t  " + Fore.MAGENTA + topBottomLine)
         print("\t", end="")
         newEndLineCounter: int = 0

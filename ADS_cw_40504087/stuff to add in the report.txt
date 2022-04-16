@@ -1,4 +1,5 @@
 - noticed how the colored() function works way faster then using Fore
+- multithreading for the timer
 
 
 

@@ -8,9 +8,20 @@ from shutil import move
 from tracemalloc import start
 from Board import Board
 from Cell import Cell
+import threading
 import time
 import os
 
+
+def countdown():
+    '''Manages the thread of the timer'''
+    global sudokuTimer
+    global stopThread
+    for sec in range(sudokuTimer):
+        sudokuTimer -= 1
+        time.sleep(1)
+        if stopThread:
+            break  
 
 def theme():
     '''Prints the game's name'''
@@ -27,17 +38,38 @@ def menu():
     "-" * 67)
     # rules()
 
+    # Global variables setting
+    global sudokuTimer
+
     # Difficulty level choice
     while True:
         try:
             choice: int = int(input("\n\nChoose the grid's size! 1/2 (4x4 or 9x9): "))
             # Whenever the input is an integer
             if (choice == 1):
+                sudokuTimer = 600
                 startGame(4, 4, choice)
                 break
             elif choice == 2:
-                secondChoice: int = int(input("\n\nChoose the difficulty level! 1/2/3: "))
-                startGame(9, 9, choice)
+                while True:
+                    try:
+                        secondChoice: int = int(input("\n\nChoose the difficulty level! 1(easy)/ 2(medium)/ 3(difficult): "))
+                        if secondChoice == 1:
+                            sudokuTimer = 900
+                            startGame(9, 9, choice)
+                            break
+                        elif secondChoice == 2:
+                            sudokuTimer = 5
+                            startGame(9, 9, choice)
+                            break
+                        elif secondChoice == 3:
+                            sudokuTimer = 480
+                            startGame(9, 9, choice)
+                            break
+                        else:
+                            print(str(secondChoice) + " is not an option! Try again!")
+                    except:
+                        print(str(secondChoice) + " is not an option! Try again!")
                 break
             else:
                 print(str(choice) + " is not an option! Try again!")
@@ -49,7 +81,7 @@ def menu():
 def rules():
     print("\n\n▬▬ι═══════   The rules   ═══════ι▬▬")
     time.sleep(0.5)
-    print(" The rules are very simple: ")
+    print("\n The rules are very simple: ")
     time.sleep(1.5)
     print("   To insert a number into the sudoku table you will need to provide the console\n",
           "  with a coordinate (e.g. 'B3', 'e7', 'H9'), a comma ',' and a number (e.g. '1', '5', '8')\n")
@@ -60,7 +92,7 @@ def rules():
     time.sleep(1.5)
     print("   Whenever you want to quit, input 'Q'\n")
     time.sleep(1.5)
-    print(" Now that you are aware of the rules you can start playing!\n",
+    print(" Now that you know the rules you can start playing!\n\n",
         "▬▬ι═══════════════════════════ι▬▬")
     time.sleep(1.5)
 
@@ -68,36 +100,57 @@ def rules():
 def startGame(width: int, height: int, choice: int):
     '''Draws the sudoku board'''
     sudokuBoard: Board = Board(width, height)
-    sudokuBoard.drawBoard(choice)
+    os.system('cls')
+    theme()
+    # Countdown is started
+    countdownThread = threading.Thread(target = countdown)
+    countdownThread.start()
+    # Board management
+    sudokuBoard.drawBoard(choice, sudokuTimer)
     movementLoop(sudokuBoard, width, choice)
 
 
 def movementLoop(sudokuBoard: Board, width: int, choice: int):
     '''Applies the user moves'''
-    while True:
-        try:
-            move: str = str(input("\nWhat is your next move?: "))
+    # Global variables setting
+    global sudokuTimer
+    global stopThread
+    stopThread = False
 
-            if (move == 'R' or move == 'r'):
-                rules()
-            elif (move == 'Q' or move == 'q'):
-                break
-            else:
-                moveTuple: tuple = tuple(move.replace(' ', '').split(','))
-                # If the move is of valid type the program can proceed to check it in deeper detail
-                if moveValidation(moveTuple, width):
-                    # Checking that no number interferes
-                    if uniquenessValidation(sudokuBoard, moveTuple, width):
-                        sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
-                        os.system('cls')
-                        theme()
-                        sudokuBoard.drawBoard(choice)
-                    else:
-                        print("This number is already present in this row/column/block!")
+    while sudokuTimer > 0:
+        while True:
+            try:
+                move: str = str(input("\nWhat is your next move?: "))
+
+                if (move == 'R' or move == 'r'):
+                    if sudokuTimer < 1:
+                        break
+                    rules()
+                elif (move == 'Q' or move == 'q'):
+                    stopThread = True
+                    break
                 else:
-                    print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
-        except:
-            print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
+                    if sudokuTimer < 1:
+                        break
+                    moveTuple: tuple = tuple(move.replace(' ', '').split(','))
+                    # If the move is of valid type the program can proceed to check it in deeper detail
+                    if moveValidation(moveTuple, width):
+                        # Checking that no number interferes
+                        if uniquenessValidation(sudokuBoard, moveTuple, width):
+                            sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
+                            os.system('cls')
+                            theme()
+                            sudokuBoard.drawBoard(choice, sudokuTimer)
+                        else:
+                            print("This number is already present in this row/column/block!")
+                    else:
+                        print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
+            except:
+                print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
+        break
+    if sudokuTimer < 1:
+        os.system('cls')
+        print("\nTIME IS OUT!!!")
 
 
 def moveValidation(moveTuple: tuple, width: int) -> bool:
@@ -191,8 +244,9 @@ def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bo
 
 
 
-
 if __name__ == "__main__":
     #os.system("color 1f")
+    stopThread = False
     menu()
+    stopThread = True
     input("\n\n Enter key to escape...")
