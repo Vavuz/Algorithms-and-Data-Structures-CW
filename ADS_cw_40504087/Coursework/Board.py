@@ -8,7 +8,6 @@ from Cell import Cell
 from colorama import Fore, init
 from termcolor import colored
 import math
-import random
 
 
 class Board():
@@ -21,9 +20,12 @@ class Board():
         self.cells: list[Cell] = []
         #self.color = random.choice(dict(Fore.__dict__.items()).keys())
         init(autoreset=True)
+        allCellsStatusAndContent: list[list[bool], list[int]] = self.generateRiddle()
+
         for i in range(0, (width * height)):
-            cell: Cell = Cell(i, 1)
+            cell: Cell = Cell(i, allCellsStatusAndContent[0][i], allCellsStatusAndContent[1][i])
             self.addCell(cell)
+
         self.coordinates: dict = {'a' : 1,
                                   'A' : 1,
                                   'b' : 2,
@@ -58,7 +60,7 @@ class Board():
             else:
                 internalLine += '-'
 
-        # Board printing
+        # Horizontal coordinates printing
         horizontalCoords: str = ""
         horizontalCoordsCounter: int = 0
         keysList = list(self.coordinates.keys())
@@ -78,8 +80,15 @@ class Board():
         if (int(seconds) < 10):
             seconds = '0' + seconds
         timeLeft: str = str(round(sudokuTimer // 60)) + ':' + str(seconds)
-        print("\t\t\t\tTime left: " + timeLeft)
+        spacing: int = 4 if self.width == 9 else 6
+        if (sudokuTimer > 240):
+            print("\t" * spacing + "Time left: " + colored(timeLeft, 'green'))
+        elif (sudokuTimer > 60):
+            print("\t" * spacing + "Time left: " + colored(timeLeft, 'yellow'))
+        else:
+            print("\t" * spacing + "Time left: " + colored(timeLeft, 'red'))
         
+        # Board printing
         print("\t  " + Fore.MAGENTA + topBottomLine)
         print("\t", end="")
         newEndLineCounter: int = 0
@@ -114,6 +123,37 @@ class Board():
                     print("\t", end="")
                 newEndLineCounter = 0
                 linesCounter += 1
+    
+
+    def generateRiddle(self) -> list[list[bool], list[int]]:
+        '''Generates all the pre-written numbers in the sudoku table'''
+        testOne = [[True, False, True, True, True, True, True,
+                    True, True, False, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, True, True, True, True,
+                    True, True, True, False],
+                    [0, 5, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 8]]
+        allCellsStatusAndContent: list[list[bool], list[int]] = [[], []]
+        for i in range(0, (self.width * self.height)):
+            allCellsStatusAndContent[0].append(testOne[0][i])
+            print(allCellsStatusAndContent)
+            allCellsStatusAndContent[1].append(testOne[1][i])
+            print(allCellsStatusAndContent)
+        input()
+        return allCellsStatusAndContent
+
     
     def boardUpdate(self, x: str, y: str, number: int, width: int):
         '''Updates the board'''

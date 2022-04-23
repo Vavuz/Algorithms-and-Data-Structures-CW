@@ -25,7 +25,7 @@ def countdown():
 
 def theme():
     '''Prints the game's name'''
-    print("\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n"
+    print("\n\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n"
           " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | |      |\n"
           "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| |      |\n"
           "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\__,__|      |\n",
@@ -47,7 +47,7 @@ def menu():
             choice: int = int(input("\n\nChoose the grid's size! 1/2 (4x4 or 9x9): "))
             # Whenever the input is an integer
             if (choice == 1):
-                sudokuTimer = 600
+                sudokuTimer = 361
                 startGame(4, 4, choice)
                 break
             elif choice == 2:
@@ -55,15 +55,15 @@ def menu():
                     try:
                         secondChoice: int = int(input("\n\nChoose the difficulty level! 1(easy)/ 2(medium)/ 3(difficult): "))
                         if secondChoice == 1:
-                            sudokuTimer = 900
+                            sudokuTimer = 1081
                             startGame(9, 9, choice)
                             break
                         elif secondChoice == 2:
-                            sudokuTimer = 5
+                            sudokuTimer = 781
                             startGame(9, 9, choice)
                             break
                         elif secondChoice == 3:
-                            sudokuTimer = 480
+                            sudokuTimer = 481
                             startGame(9, 9, choice)
                             break
                         else:
@@ -135,18 +135,34 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
                     moveTuple: tuple = tuple(move.replace(' ', '').split(','))
                     # If the move is of valid type the program can proceed to check it in deeper detail
                     if moveValidation(moveTuple, width):
-                        # Checking that no number interferes
-                        if uniquenessValidation(sudokuBoard, moveTuple, width):
-                            sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
+                        # Checking that the cell is editable
+                        if editableValidation(sudokuBoard, moveTuple, width):
+                            # Checking that no number interferes
+                            if uniquenessValidation(sudokuBoard, moveTuple, width):
+                                sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
+                                os.system('cls')
+                                theme()
+                                sudokuBoard.drawBoard(choice, sudokuTimer)
+                            else:
+                                os.system('cls')
+                                theme()
+                                sudokuBoard.drawBoard(choice, sudokuTimer)
+                                print("\n" + moveTuple[1] + " is already present in this row/column/block!")
+                        else:
                             os.system('cls')
                             theme()
                             sudokuBoard.drawBoard(choice, sudokuTimer)
-                        else:
-                            print("This number is already present in this row/column/block!")
+                            print("\nThis cell cannot be edited!")
                     else:
-                        print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
+                        os.system('cls')
+                        theme()
+                        sudokuBoard.drawBoard(choice, sudokuTimer)
+                        print("\nThe input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
             except:
-                print("The input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
+                os.system('cls')
+                theme()
+                sudokuBoard.drawBoard(choice, sudokuTimer)
+                print("\nThe input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
         break
     if sudokuTimer < 1:
         os.system('cls')
@@ -242,6 +258,16 @@ def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bo
             break
     return True
 
+
+def editableValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool:
+    '''Validates that the cell can be edited'''
+    currentId: int = ((int(moveTuple[0][1:]) - 1) * width) + sudokuBoard.coordinates[moveTuple[0][:1]] - 1
+    for cell in sudokuBoard.cells:
+        if cell.id == currentId:
+            if cell.overwritable == True:
+                return True
+            else:
+                return False
 
 
 if __name__ == "__main__":
