@@ -4,10 +4,7 @@ This file is the main file for the Sudoku game
 @date 04/02/2022
 '''
 
-from shutil import move
-from tracemalloc import start
 from Board import Board
-from Cell import Cell
 import threading
 import time
 import os
@@ -25,11 +22,11 @@ def countdown():
 
 def theme():
     '''Prints the game's name'''
-    print("\n\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n"
-          " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | |      |\n"
-          "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| |      |\n"
-          "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\__,__|      |\n",
-          "                                                                  |")
+    print("\n\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n" +
+              " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | |      |\n" +
+              "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| |      |\n" +
+              "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\__,__|      |\n" +
+              "                                                                   |")
 
 def menu():
     '''Prints the game's menu'''
@@ -125,6 +122,9 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
                 if (move == 'R' or move == 'r'):
                     if sudokuTimer < 1:
                         break
+                    os.system('cls')
+                    theme()
+                    sudokuBoard.drawBoard(choice, sudokuTimer)
                     rules()
                 elif (move == 'Q' or move == 'q'):
                     stopThread = True
@@ -268,6 +268,7 @@ def editableValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool
                 return True
             else:
                 return False
+
 
 
 if __name__ == "__main__":
