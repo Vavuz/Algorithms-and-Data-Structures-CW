@@ -65,6 +65,7 @@ def solve(fullGrid) -> bool:
 
 
 def valid(fullGrid, num, position):
+    '''Checks that the number can be inserted without interference'''
     # Check row
     for i in range(len(fullGrid[0])):
         if fullGrid[position[0]][i] == num and position[1] != i:
@@ -75,11 +76,11 @@ def valid(fullGrid, num, position):
         if fullGrid[i][position[1]] == num and position[0] != i:
             return False
 
-    # Check box
-    boxX = position[1] // 3
-    boxY = position[0] // 3
-    for i in range(boxY * 3, boxY * 3 + 3):
-        for j in range(boxX * 3, boxX * 3 + 3):
+    # Check block
+    blockX = position[1] // 3
+    blockY = position[0] // 3
+    for i in range(blockY * 3, blockY * 3 + 3):
+        for j in range(blockX * 3, blockX * 3 + 3):
             if fullGrid[i][j] == num and (i, j) != position:
                 return False
 
@@ -87,6 +88,7 @@ def valid(fullGrid, num, position):
 
 
 def printBoard(fullGrid):
+    '''Prints the board'''
     for i in range(len(fullGrid)):
         if i % 3 == 0 and i != 0:
             print("- - - - - - - - - - - - - ")
@@ -109,7 +111,9 @@ def findEmpty(fullGrid):
                 return (i, j)  # row, column
     return None
 
-def unaProva(fullGrid):
+
+def removeNumbers(fullGrid):
+    '''Removes numbers from the complete grid'''
     counter = 0
     board = fullGrid
     copyBoard = board
@@ -141,4 +145,4 @@ if __name__ == "__main__":
     solve(board)
     printBoard(board)
     print("\n\n")
-    unaProva(board)
+    removeNumbers(board)
