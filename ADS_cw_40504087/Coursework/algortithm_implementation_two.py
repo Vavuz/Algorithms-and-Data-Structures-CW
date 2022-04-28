@@ -10,7 +10,7 @@ import random
 
 def generateBoard() -> list:
     '''The algorithm that fills in the grid'''
-    fullGrid = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+    fullGrid: list[list[int]] = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -20,9 +20,9 @@ def generateBoard() -> list:
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-    numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    startIndex = 0
-    endIndex = 3
+    numbers: list[int] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    startIndex: int = 0
+    endIndex: int = 3
     for i in range(9):
         if i % 3 == 0:
             numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -37,7 +37,7 @@ def generateBoard() -> list:
             pass
 
         for j in range(startIndex, endIndex):
-            number = random.choice(numbers)
+            number: int = random.choice(numbers)
             fullGrid[i][j] = number
             numbers.remove(number)
         
@@ -46,11 +46,12 @@ def generateBoard() -> list:
 
 def solve(fullGrid) -> bool:
     '''Fills in the rest of the grid'''
-    find = findEmpty(fullGrid)
+    find: tuple[int, int] | None = findEmpty(fullGrid)
     if not find:
         return True
     else:
-        row, column = find
+        row: int = find[0]
+        column: int = find[1]
 
     for i in range(1,10):
         if valid(fullGrid, i, (row, column)):
@@ -77,8 +78,8 @@ def valid(fullGrid, num, position):
             return False
 
     # Check block
-    blockX = position[1] // 3
-    blockY = position[0] // 3
+    blockX: int = position[1] // 3
+    blockY: int = position[0] // 3
     for i in range(blockY * 3, blockY * 3 + 3):
         for j in range(blockX * 3, blockX * 3 + 3):
             if fullGrid[i][j] == num and (i, j) != position:
@@ -114,10 +115,10 @@ def findEmpty(fullGrid):
 
 def removeNumbers(fullGrid):
     '''Removes numbers from the complete grid'''
-    counter = 0
-    board = fullGrid
-    copyBoard = board
-    tempCopy = copyBoard
+    counter: int = 0
+    board: list = fullGrid
+    copyBoard: list = fullGrid
+    tempCopy: list = fullGrid
 
     while True:
         x: int = random.randint(0, 8)
@@ -126,23 +127,25 @@ def removeNumbers(fullGrid):
             counter += 1
             copyBoard[x][y] = 0
             tempCopy[x][y] = 0
-            printBoard(tempCopy)
+            #printBoard(tempCopy)
 
             if solve(tempCopy):
-                printBoard(copyBoard)
+                #printBoard(copyBoard)
                 board = copyBoard
                 tempCopy = copyBoard
             else:
                 break
             if counter > 5:
                 break
-    #printBoard(board)
+    return board
 
 
 
 if __name__ == "__main__":
     board = generateBoard()
     solve(board)
+    print("Full board: ")
     printBoard(board)
     print("\n\n")
-    removeNumbers(board)
+    print("Board after being emptied: ")
+    printBoard(removeNumbers(board))
