@@ -4,7 +4,7 @@ Another algorithm
 @date 28/04/2022
 '''
 
-from copy import copy
+import copy
 import random
 
 
@@ -47,7 +47,7 @@ def generateBoard() -> list:
 def solve(fullGrid) -> bool:
     '''Fills in the rest of the grid'''
     find: tuple[int, int] | None = findEmpty(fullGrid)
-    if not find:
+    if find == None:
         return True
     else:
         row: int = find[0]
@@ -65,7 +65,7 @@ def solve(fullGrid) -> bool:
     return False
 
 
-def valid(fullGrid, num, position):
+def valid(fullGrid, num, position) -> bool:
     '''Checks that the number can be inserted without interference'''
     # Check row
     for i in range(len(fullGrid[0])):
@@ -104,7 +104,7 @@ def printBoard(fullGrid):
                 print(str(fullGrid[i][j]) + " ", end="")
 
 
-def findEmpty(fullGrid):
+def findEmpty(fullGrid) -> tuple[int, int] | None:
     '''Finds the first empty cell available'''
     for i in range(len(fullGrid)):
         for j in range(len(fullGrid[0])):
@@ -113,39 +113,46 @@ def findEmpty(fullGrid):
     return None
 
 
-def removeNumbers(fullGrid):
+def removeNumbers(fullGrid) -> list[list[int]]:
     '''Removes numbers from the complete grid'''
     counter: int = 0
-    board: list = fullGrid
-    copyBoard: list = fullGrid
-    tempCopy: list = fullGrid
+    board: list = copy.deepcopy(fullGrid)
+    copyBoard: list = copy.deepcopy(fullGrid)
+    tempCopy: list = copy.deepcopy(fullGrid)
 
     while True:
         x: int = random.randint(0, 8)
         y: int = random.randint(0, 8)
         if copyBoard[x][y] != 0:
-            counter += 1
             copyBoard[x][y] = 0
             tempCopy[x][y] = 0
-            #printBoard(tempCopy)
 
             if solve(tempCopy):
-                #printBoard(copyBoard)
-                board = copyBoard
-                tempCopy = copyBoard
+                counter += 1
+                board = copy.deepcopy(copyBoard)
+                tempCopy = copy.deepcopy(copyBoard)
+                #printBoard(board)
             else:
                 break
-            if counter > 5:
+
+            if counter == 45:
                 break
+
+    print(board)
     return board
 
 
 
 if __name__ == "__main__":
-    board = generateBoard()
+    '''board = generateBoard()
     solve(board)
     print("Full board: ")
     printBoard(board)
     print("\n\n")
     print("Board after being emptied: ")
-    printBoard(removeNumbers(board))
+    printBoard(removeNumbers(board))'''
+    board = [[4, 0, 3, 0, 5, 7, 0, 6, 0], [0, 0, 5, 2, 0, 9, 4, 0, 3], [0, 0, 0, 0, 0, 0, 2, 0, 5], [3, 7, 4, 0, 2, 0, 0, 8, 0], [2, 8, 0, 5, 1, 3, 7, 0, 0], [0, 0, 6, 0, 8, 4, 3, 0, 2], [0, 0, 0, 0, 9, 0, 6, 
+2, 0], [0, 3, 0, 6, 0, 0, 1, 0, 0], [0, 6, 0, 0, 0, 0, 0, 3, 0]]
+    solve(board)
+    printBoard(board)
+    print(board)
