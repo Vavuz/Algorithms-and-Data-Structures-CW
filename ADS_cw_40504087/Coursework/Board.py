@@ -5,6 +5,7 @@ This file contains the Board class
 '''
 
 from Cell import Cell
+from GridGenerator import GridGenerator
 from colorama import Fore, init
 from termcolor import colored
 import math
@@ -13,10 +14,11 @@ import math
 class Board():
     '''This class manages the game board'''
 
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, choice: int):
         '''Board class constructor'''
         self.width: int = width
         self.height: int = height
+        self.choice: int = choice
         self.cells: list[Cell] = []
         #self.color = random.choice(dict(Fore.__dict__.items()).keys())
         init(autoreset=True)
@@ -127,31 +129,17 @@ class Board():
 
     def generateRiddle(self) -> list[list[bool], list[int]]:
         '''Generates all the pre-written numbers in the sudoku table'''
-        testOne = [[True, False, True, True, True, True, True,
-                    True, True, False, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True,
-                    True, True, True, False],
-                    [0, 5, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 8]]
+        gridGenerator: GridGenerator = GridGenerator(self.width, self.choice)
+        grid: list[int] = gridGenerator.getGrid()
+
         allCellsStatusAndContent: list[list[bool], list[int]] = [[], []]
-        for i in range(0, (self.width * self.height)):
-            allCellsStatusAndContent[0].append(testOne[0][i])
-            print(allCellsStatusAndContent)
-            allCellsStatusAndContent[1].append(testOne[1][i])
-            print(allCellsStatusAndContent)
-        input()
+        for number in grid:
+            if number != 0:
+                allCellsStatusAndContent[0].append(False)
+            else:
+                allCellsStatusAndContent[0].append(True)
+            allCellsStatusAndContent[1].append(number)
+
         return allCellsStatusAndContent
 
     

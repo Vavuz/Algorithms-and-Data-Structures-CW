@@ -8,6 +8,7 @@ from Board import Board
 import threading
 import time
 import os
+from colorama import Fore
 
 
 def countdown():
@@ -22,16 +23,17 @@ def countdown():
 
 def theme():
     '''Prints the game's name'''
-    print("\n\n /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n" +
+    print(Fore.CYAN + "\n\n                                                                   |\n" +
+              " /\   /\__ ___   ____ _ ___ ___ _   _  __| | ___ | | ___   _       |\n" +
               " \ \ / / _` \ \ / / _` / __/ __| | | |/ _` |/ _ \| |/ / | | |      |\n" +
               "  \ V / (_| |\ V / (_| \__ \__ \ |_| | (_| | (_) |   <| |_| |      |\n" +
               "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\__,__|      |\n" +
-              "                                                                   |")
+              "                                                                   |\n", end="")
 
 def menu():
     '''Prints the game's menu'''
     theme()
-    print("\t\t\tWelcome to Vavassudoku!" + 20 * ' ' + "|\n",
+    print(" " * 67 + "|\n\t\t\tWelcome to Vavassudoku!" + 20 * ' ' + "|\n",
     "-" * 67)
     # rules()
 
@@ -45,7 +47,7 @@ def menu():
             # Whenever the input is an integer
             if (choice == 1):
                 sudokuTimer = 361
-                startGame(4, 4, choice)
+                startGame(4, 4, choice, 0)
                 break
             elif choice == 2:
                 while True:
@@ -53,15 +55,15 @@ def menu():
                         secondChoice: int = int(input("\n\nChoose the difficulty level! 1(easy)/ 2(medium)/ 3(difficult): "))
                         if secondChoice == 1:
                             sudokuTimer = 1081
-                            startGame(9, 9, choice)
+                            startGame(9, 9, choice, secondChoice)
                             break
                         elif secondChoice == 2:
                             sudokuTimer = 781
-                            startGame(9, 9, choice)
+                            startGame(9, 9, choice, secondChoice)
                             break
                         elif secondChoice == 3:
                             sudokuTimer = 481
-                            startGame(9, 9, choice)
+                            startGame(9, 9, choice, secondChoice)
                             break
                         else:
                             print(str(secondChoice) + " is not an option! Try again!")
@@ -78,7 +80,7 @@ def menu():
 def rules():
     print("\n\n▬▬ι═══════   The rules   ═══════ι▬▬")
     time.sleep(0.5)
-    print("\n The rules are very simple: ")
+    print("\n The rules are very simple: \n")
     time.sleep(1.5)
     print("   To insert a number into the sudoku table you will need to provide the console\n",
           "  with a coordinate (e.g. 'B3', 'e7', 'H9'), a comma ',' and a number (e.g. '1', '5', '8')\n")
@@ -94,9 +96,9 @@ def rules():
     time.sleep(1.5)
 
 
-def startGame(width: int, height: int, choice: int):
+def startGame(width: int, height: int, choice: int, secondChoice: int):
     '''Draws the sudoku board'''
-    sudokuBoard: Board = Board(width, height)
+    sudokuBoard: Board = Board(width, height, secondChoice)
     os.system('cls')
     theme()
     # Countdown is started
@@ -127,6 +129,9 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
                     sudokuBoard.drawBoard(choice, sudokuTimer)
                     rules()
                 elif (move == 'Q' or move == 'q'):
+                    os.system('cls')
+                    theme()
+                    sudokuBoard.drawBoard(choice, sudokuTimer)
                     stopThread = True
                     break
                 else:
@@ -272,7 +277,6 @@ def editableValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool
 
 
 if __name__ == "__main__":
-    #os.system("color 1f")
     stopThread = False
     menu()
     stopThread = True
