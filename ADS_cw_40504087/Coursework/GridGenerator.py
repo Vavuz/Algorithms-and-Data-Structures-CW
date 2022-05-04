@@ -1,7 +1,6 @@
 '''
 This file contains the GridGenerator class
 @author Marco Vavassori
-@date 29/04/2022
 '''
 
 import copy
@@ -42,7 +41,6 @@ class GridGenerator():
                 if not zeros:
                     break
             grid = self.removeNumbersSmall(grid)
-            input()
 
         newGrid: list[int] = []
         for row in grid:
@@ -113,7 +111,7 @@ class GridGenerator():
         return fullGrid
 
 
-    def solveBig(self, fullGrid) -> bool:
+    def solveBig(self, fullGrid: list[list[int]]) -> bool:
         '''Fills in the rest of the grid'''
         find: tuple[int, int] | None = self.findEmpty(fullGrid)
         if find == None:
@@ -133,7 +131,7 @@ class GridGenerator():
 
         return False
 
-    def solveSmall(self, fullGrid) -> bool:
+    def solveSmall(self, fullGrid: list[list[int]]) -> bool:
         '''Fills in the rest of the grid'''
         find: tuple[int, int] | None = self.findEmpty(fullGrid)
         if find == None:
@@ -154,7 +152,7 @@ class GridGenerator():
         return False
 
 
-    def valid(self, fullGrid, num, position) -> bool:
+    def valid(self, fullGrid: list[list[int]], num: int, position: int) -> bool:
         '''Checks that the number can be inserted without interference'''
         # Check row
         for i in range(len(fullGrid[0])):
@@ -185,7 +183,7 @@ class GridGenerator():
         return True
 
 
-    def findEmpty(self, fullGrid) -> tuple[int, int] | None:
+    def findEmpty(self, fullGrid: list[list[int]]) -> tuple[int, int] | None:
         '''Finds the first empty cell available'''
         for i in range(len(fullGrid)):
             for j in range(len(fullGrid[0])):
@@ -194,7 +192,7 @@ class GridGenerator():
         return None
 
 
-    def removeNumbersBig(self, fullGrid) -> list[list[int]]:
+    def removeNumbersBig(self, fullGrid: list[list[int]]) -> list[list[int]]:
         '''Removes numbers from the complete grid'''
         counter: int = 56
         board: list = copy.deepcopy(fullGrid)
@@ -225,7 +223,7 @@ class GridGenerator():
                     break
         return board
 
-    def removeNumbersSmall(self, fullGrid) -> list[list[int]]:
+    def removeNumbersSmall(self, fullGrid: list[list[int]]) -> list[list[int]]:
         '''Removes numbers from the complete grid'''
         counter: int = 0
         board: list = copy.deepcopy(fullGrid)

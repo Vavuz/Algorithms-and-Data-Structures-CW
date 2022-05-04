@@ -1,7 +1,6 @@
 '''
 This file is the main file for the Sudoku game
 @author Marco Vavassori
-@date 04/02/2022
 '''
 
 from Board import Board
@@ -9,6 +8,8 @@ import threading
 import time
 import os
 from colorama import Fore
+from GameManager import GameManager
+
 
 
 def countdown():
@@ -35,46 +36,57 @@ def menu():
     theme()
     print(" " * 67 + "|\n\t\t\tWelcome to Vavassudoku!" + 20 * ' ' + "|\n",
     "-" * 67)
-    # rules()
 
     # Global variables setting
     global sudokuTimer
 
-    # Difficulty level choice
+    # Play or replay
     while True:
         try:
-            choice: int = int(input("\n\nChoose the grid's size! 1/2 (4x4 or 9x9): "))
-            # Whenever the input is an integer
-            if (choice == 1):
-                sudokuTimer = 361
-                startGame(4, 4, choice, 0)
-                break
-            elif choice == 2:
+            playOrReplay: int = int(input("Would you like to play or to replay a match?   (1 / 2): "))
+            if playOrReplay == 1:
+                # Difficulty level choice
+                # rules()
                 while True:
                     try:
-                        secondChoice: int = int(input("\n\nChoose the difficulty level! 1(easy)/ 2(medium)/ 3(difficult): "))
-                        if secondChoice == 1:
-                            sudokuTimer = 1081
-                            startGame(9, 9, choice, secondChoice)
+                        choice: int = int(input("\n\nChoose the grid's size! 4x4 or 9x9   (1 / 2): "))
+                        # Whenever the input is an integer
+                        if (choice == 1):
+                            sudokuTimer = 361
+                            startGame(4, 4, choice, 0)
                             break
-                        elif secondChoice == 2:
-                            sudokuTimer = 781
-                            startGame(9, 9, choice, secondChoice)
-                            break
-                        elif secondChoice == 3:
-                            sudokuTimer = 481
-                            startGame(9, 9, choice, secondChoice)
+                        elif choice == 2:
+                            while True:
+                                try:
+                                    secondChoice: int = int(input("\n\nChoose the difficulty level! 1(easy)/ 2(medium)/ 3(difficult): "))
+                                    if secondChoice == 1:
+                                        sudokuTimer = 1081
+                                        startGame(9, 9, choice, secondChoice)
+                                        break
+                                    elif secondChoice == 2:
+                                        sudokuTimer = 781
+                                        startGame(9, 9, choice, secondChoice)
+                                        break
+                                    elif secondChoice == 3:
+                                        sudokuTimer = 481
+                                        startGame(9, 9, choice, secondChoice)
+                                        break
+                                    else:
+                                        print(str(secondChoice) + " is not an option! Try again!")
+                                except:
+                                    print(str(secondChoice) + " is not an option! Try again!")
                             break
                         else:
-                            print(str(secondChoice) + " is not an option! Try again!")
+                            print(str(choice) + " is not an option! Try again!")
+                    # Whenever the input is not an integer
                     except:
-                        print(str(secondChoice) + " is not an option! Try again!")
+                        print("That is not a choice! Try again!")
                 break
             else:
-                print(str(choice) + " is not an option! Try again!")
-        # Whenever the input is not an integer
+                #replay
+                print("NOT YET IMPLEMENTED!")
         except:
-            print("That is not a choice! Try again!")
+            print("That is not an option! Try again")
 
 
 def rules():
@@ -115,12 +127,15 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
     global sudokuTimer
     global stopThread
     stopThread = False
+    undoPressed: bool = False
+    gameManager: GameManager = GameManager() 
 
     while sudokuTimer > 0:
         while True:
             try:
                 move: str = str(input("\nWhat is your next move?: "))
 
+                # Rules
                 if (move == 'R' or move == 'r'):
                     if sudokuTimer < 1:
                         break
@@ -128,12 +143,43 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
                     theme()
                     sudokuBoard.drawBoard(choice, sudokuTimer)
                     rules()
+                # Quit
                 elif (move == 'Q' or move == 'q'):
                     os.system('cls')
                     theme()
                     sudokuBoard.drawBoard(choice, sudokuTimer)
                     stopThread = True
                     break
+                # Undo
+                elif (move == 'U' or move == 'u'):
+                    os.system('cls')
+                    theme()
+                    try:
+                        undoMovement: tuple[str, str] = gameManager.getUndo()
+                        gameManager.undoRedoForReplay(undoMovement)
+                        undoPressed = True
+                        sudokuBoard.boardUpdate(undoMovement[0][:1], undoMovement[0][1:], undoMovement[1], width)
+                        sudokuBoard.drawBoard(choice, sudokuTimer)
+                    except:
+                        sudokuBoard.drawBoard(choice, sudokuTimer)
+                        print("\nThere is nothing to undo!")
+                # Redo
+                elif (move == 'RE' or move == 'Re' or move == 're'):
+                    os.system('cls')
+                    theme()
+                    # You can only redo if the previous move was an undo, or a redo
+                    if undoPressed:
+                        redoMovement: tuple[str, str] | None = gameManager.getRedo()
+                        if redoMovement == None:
+                            sudokuBoard.drawBoard(choice, sudokuTimer)
+                            print("\nYou cannot redo anymore!")
+                        else:
+                            gameManager.undoRedoForReplay(redoMovement)
+                            sudokuBoard.boardUpdate(redoMovement[0][:1], redoMovement[0][1:], redoMovement[1], width)
+                            sudokuBoard.drawBoard(choice, sudokuTimer)
+                    else:
+                        sudokuBoard.drawBoard(choice, sudokuTimer)
+                        print("\nYou cannot redo anymore!")
                 else:
                     if sudokuTimer < 1:
                         break
@@ -144,10 +190,13 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
                         if editableValidation(sudokuBoard, moveTuple, width):
                             # Checking that no number interferes
                             if uniquenessValidation(sudokuBoard, moveTuple, width):
+                                gameManager.move(moveTuple)
                                 sudokuBoard.boardUpdate(moveTuple[0][:1], moveTuple[0][1:], moveTuple[1], width)
                                 os.system('cls')
                                 theme()
+                                gameManager.deleteUndone()
                                 sudokuBoard.drawBoard(choice, sudokuTimer)
+                                undoPressed = False
                             else:
                                 os.system('cls')
                                 theme()

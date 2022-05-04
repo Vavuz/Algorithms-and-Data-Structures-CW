@@ -1,7 +1,6 @@
 '''
 This file contains the Board class
 @author Marco Vavassori
-@date 04/02/2022
 '''
 
 from Cell import Cell
@@ -82,7 +81,7 @@ class Board():
         if (int(seconds) < 10):
             seconds = '0' + seconds
         timeLeft: str = str(round(sudokuTimer // 60)) + ':' + str(seconds)
-        spacing: int = 4 if self.width == 9 else 6
+        spacing: int = 3 if self.width == 9 else 5
         if (sudokuTimer > 240):
             print("\t" * spacing + "Time left: " + colored(timeLeft, 'green'))
         elif (sudokuTimer > 60):
@@ -125,6 +124,12 @@ class Board():
                     print("\t", end="")
                 newEndLineCounter = 0
                 linesCounter += 1
+        
+        totLeft: int = 0
+        for cell in self.cells:
+            if cell.currentNumber == 0:
+                totLeft += 1
+        print("\t     " + " " * self.width * 5 + "\t" * spacing + "Completed: " + str(len(self.cells) - totLeft) + " / " +  str(len(self.cells)))
     
 
     def generateRiddle(self) -> list[list[bool], list[int]]:
@@ -149,6 +154,15 @@ class Board():
             if cell.id == (self.coordinates[x] + (width * (int(y) - 1)) - 1):
                 cell.writeNumber(number)
                 break
+    
+    
+    def removeNumber(self, x: str, y: str, width: int):
+        ''' Removes a number in a cell '''
+        for cell in self.cells:
+            if cell.id == (self.coordinates[x] + (width * (int(y) - 1)) - 1):
+                cell.writeNumber(0)
+                break
+
 
     def addCell(self, cell: Cell):
         '''Adds a cell to the list of cells'''

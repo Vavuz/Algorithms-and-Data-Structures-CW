@@ -16,6 +16,7 @@ class Cell():
         self.overwritable: bool = overwritable
         self.currentNumber: int = currentNumber
 
+
     def drawCell(self):
         '''Draws a cell'''
         if self.currentNumber == 0:
@@ -24,11 +25,13 @@ class Cell():
             if self.overwritable:
                 print("[ " + colored(str(self.currentNumber), 'green') + " ]", end="")
             else:
-                print("[ " + colored(str(self.currentNumber), 'blue') + " ]", end="")
+                print("[ " + colored(str(self.currentNumber), 'cyan') + " ]", end="")
         
+
     def writeNumber(self, number: int):
         '''Changes the number that is currently displayed'''
         self.currentNumber = number
+
 
     def getId(self) -> int:
         '''Returns the id'''
