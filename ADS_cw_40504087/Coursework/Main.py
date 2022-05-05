@@ -37,26 +37,27 @@ def theme():
 def menu() -> bool:
     '''Prints the game's menu'''
 
-    # Game manager
+    # Variables
     gameManager: GameManager = GameManager(0) 
-
-    # Global variables setting
     global sudokuTimer
 
     # Play or replay
     while True:
         try:
+            # Printing the theme
             theme()
             print(Fore.CYAN + ' ' * 67 + Fore.CYAN + "|\n\t\t\tWelcome to Vavassudoku!" + Fore.CYAN + 20 * ' ' + "|\n" + Fore.CYAN + "-" * 67)
             print("\n\nWould you like to " + colored("play", 'cyan') + ", " + colored("replay a match", 'yellow') + \
                 " or to " + colored("quit", 'green') + "?   (" + colored("1", 'cyan') + " / " + colored("2", 'yellow') + \
                     " / " + colored("3", 'green') + "): ", end="")
+            
             playOrReplay: int = int(input())
+            # Play
             if playOrReplay == 1:
                 # Difficulty level choice
                 os.system('cls')
                 theme()
-                # rules()
+                rules()
                 while True:
                     try:
                         print("\n\nChoose the grid's size! " + colored("4x4", 'yellow') + " or " + colored("9x9", 'green') + \
@@ -77,6 +78,8 @@ def menu() -> bool:
                                             " or " + colored("difficult", 'green') + "   (" + colored("1", 'cyan') + " / " + \
                                                 colored("2", 'yellow') + " / " + colored("3", 'green') + "): ", end="")
                                     secondChoice: int = int(input())
+
+                                    # Starting game according to difficulty chosen
                                     if secondChoice == 1:
                                         sudokuTimer = 1081
                                         gameManager: GameManager = GameManager(9) 
@@ -103,6 +106,7 @@ def menu() -> bool:
                     except:
                         print("That is not a choice! Try again!")
                 break
+            # Replay
             elif playOrReplay == 2:
                 #replay
                 if os.path.exists("matches.pkl"):
@@ -112,6 +116,7 @@ def menu() -> bool:
                     print("\nYou haven't saved any match yet!")
                     time.sleep(1)
                     os.system('cls')
+            # Quit
             elif playOrReplay == 3:
                 return True
             else:
@@ -121,6 +126,7 @@ def menu() -> bool:
 
 
 def rules():
+    '''Prints the rules'''
     print("\n\n▬▬ι═══════   The rules   ═══════ι▬▬")
     time.sleep(0.5)
     print("\n The rules are very simple: \n")
@@ -144,7 +150,7 @@ def rules():
 
 
 def startGame(width: int, height: int, choice: int, secondChoice: int, gameManager: GameManager):
-    '''Draws the sudoku board'''
+    '''Starts timer and movements loop'''
     sudokuBoard: Board = Board(width, height, secondChoice)
     os.system('cls')
     theme()
@@ -158,19 +164,21 @@ def startGame(width: int, height: int, choice: int, secondChoice: int, gameManag
 
 def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameManager):
     '''Applies the user moves'''
-    # Global variables setting
+    # Variables
     global sudokuTimer
     global stopThread
     stopThread = False
     undoPressed: bool = False
 
+    # Until the time has not finished
     while sudokuTimer > 0:
         while True:
             try:
+                # If the sudoku grid is full you won
                 if sudokuBoard.isFull():
                     break
 
-                move: str = str(input("\nWhat is your next move?: "))
+                move: str = str(input("\nWhat is your next move? (remember 'R' for rules, 'Q' to quit, 'U' to undo, 'RE' to redo): "))
 
                 # Rules
                 if (move == 'R' or move == 'r'):
@@ -192,6 +200,7 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameM
                     os.system('cls')
                     theme()
                     try:
+                        # GameManager is called, it manages game's undos and redos
                         undoMovement: tuple[str, str] = gameManager.getUndo()
                         gameManager.undoRedoForReplay(undoMovement)
                         undoPressed = True
@@ -206,6 +215,7 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameM
                     theme()
                     # You can only redo if the previous move was an undo, or a redo
                     if undoPressed:
+                        # GameManager is called, it manages game's undos and redos
                         redoMovement: tuple[str, str] | None = gameManager.getRedo()
                         if redoMovement == None:
                             sudokuBoard.drawBoard(choice, sudokuTimer)
@@ -362,6 +372,8 @@ def uniquenessValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bo
 def editableValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool:
     '''Validates that the cell can be edited'''
     currentId: int = ((int(moveTuple[0][1:]) - 1) * width) + sudokuBoard.coordinates[moveTuple[0][:1]] - 1
+    
+    # Checking every cell's overwritable variable
     for cell in sudokuBoard.cells:
         if cell.id == currentId:
             if cell.overwritable == True:
@@ -371,7 +383,7 @@ def editableValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool
 
 
 def replayGame(gameManager: GameManager):
-    ''' Sets up the game's replaying'''
+    '''Sets up the game's replaying'''
     os.system('cls')
     allGames: list[Game] = gameManager.deserialise()
 
@@ -382,10 +394,10 @@ def replayGame(gameManager: GameManager):
 
     while True:
         try:
-            gameToReplay: str = str(input("\n\nWrite the " + colored("name", 'green') + " of the game that you would like to replay: "))
+            gameToReplay: str = str(input("\n\nWrite the " + colored("name", 'green') + " of the game that you would like to replay: "))    # game choice
             for game in allGames:
                 if game.name == gameToReplay:
-                    replayLoop(game.size, game.moves, game.allCellsStatusAndContent)
+                    replayLoop(game.size, game.moves, game.allCellsStatusAndContent)    # starts the replay loop
                     return
             print("There is no game with such name!")
         except:
@@ -393,45 +405,20 @@ def replayGame(gameManager: GameManager):
 
 
 def replayLoop(size: int, moves: list[tuple[str, str]], allCellsStatusAndContent: list[list[bool], list[int]]):
-    ''' Replays the game '''
+    '''Replays the game'''
     os.system('cls')
     if size == 9:
         choice: int = 2
     else:
         choice: int = 1
     
+    # A new sudoku board and a new game manager are created
     replaySudokuBoard: ReplayBoard = ReplayBoard(size, allCellsStatusAndContent)
     gameManagerReplay: GameManager = GameManager(size)
     theme()
     replaySudokuBoard.drawBoard(choice)
-    '''
-    counter: int = -1
-    while True:
-        try:
-            backForth: str = str(input("\nType " + colored("nothing and enter", 'yellow') + " to go forward, " + \
-                                        colored("'U' and enter", 'green') + " to go backwards: "))
-            if backForth == "":
-                counter += 1
-                gameManagerReplay.move(moves[counter])
-                move: tuple[str, str] = gameManagerReplay.getRedo()
-                replaySudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], size)
-                os.system('cls')
-                replaySudokuBoard.drawBoard(choice)
-            elif backForth.lower() == 'u':
-                move: tuple[str, str] = gameManagerReplay.getUndo()
-                replaySudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], size)
-                os.system('cls')
-                replaySudokuBoard.drawBoard(choice)
-                counter -= 1
-            else:
-                print("\nThis input is not valid!")
-
-            if counter == len(moves) - 1:
-                break
-        except:
-            print("\nThis input is not valid!")
-    '''
     
+    # Looping through every move
     for move in moves:
         replaySudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], size)
         input("Press " + colored("enter", 'green') + " to see the next move...")
@@ -439,7 +426,7 @@ def replayLoop(size: int, moves: list[tuple[str, str]], allCellsStatusAndContent
         theme()
         replaySudokuBoard.drawBoard(choice)
     
-
+    # End of replay
     input("Press enter to see the next move...")
     os.system('cls')
     print("\n\n\nThe replay has finished!")
@@ -460,7 +447,7 @@ def gameOver(sudokuBoard: Board, gameManager: GameManager, win: bool):
         try:
             save: str = str(input("\n\nWould you like to save this game?   y/n: "))
             if save.lower() == "y":
-                gameManager.serialise(sudokuBoard.allCellsStatusAndContent)
+                gameManager.serialise(sudokuBoard.allCellsStatusAndContent)    # runs serialisation
                 os.system('cls')
                 break
             elif save.lower() == "n":
@@ -473,6 +460,7 @@ def gameOver(sudokuBoard: Board, gameManager: GameManager, win: bool):
 
 
 def main() -> bool:
+    '''Main'''
     init(autoreset=True)
     stopThread = False
     end: bool = menu()

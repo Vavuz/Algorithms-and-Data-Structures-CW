@@ -3,10 +3,7 @@ This file contains the GameManager class
 @author Marco Vavassori
 '''
 
-
-import time
 import pickle
-from datetime import date
 from Game import Game
 import os.path
 
@@ -16,7 +13,7 @@ class GameManager():
     ''' This class manages undo, redo, saving, and replaying '''
 
     def __init__(self, size: int):
-        ''' Constructor '''
+        '''GameManager class constructor'''
         self.moves: list[tuple[str, str]] = []
         self.movesCopy: list[tuple[str, str]] = []
         self.movesForReplay: list[tuple[str, str]] = []
@@ -25,13 +22,14 @@ class GameManager():
 
     
     def move(self, move: tuple[str, str]):
-        ''' Updates the list of movements '''
+        '''Updates the list of movements'''
         self.moves.append(move)
         self.movesCopy.append(move)
         self.movesForReplay.append(move)
 
+
     def getUndo(self) -> tuple[str, str]:
-        ''' Returns the previous move'''
+        '''Returns the previous move'''
         allCoords: list[str] = []        
         lastMove: tuple[str, str] = self.movesCopy.pop()    # storing last move
         self.undoneMoves.append(lastMove)
@@ -57,14 +55,17 @@ class GameManager():
 
 
     def undoRedoForReplay(self, move: tuple[str, str]):
+        '''Adds undone movements to movesForReplay'''
         self.movesForReplay.append(move)
 
 
     def deleteUndone(self):
+        '''Deletes the list of undone movements'''
         self.undoneMoves = []
 
 
     def getRedo(self) -> tuple[str, str] | None:
+        '''Returns the movement to redo'''
         if len(self.undoneMoves) > 0:
             redoMove: tuple[str, str] = self.undoneMoves[len(self.undoneMoves) - 1]
             self.undoneMoves.pop()
@@ -75,7 +76,7 @@ class GameManager():
 
 
     def serialise(self, allCellsStatusAndContent: list[list[bool], list[int]]):
-        ''' It serialises a list of Games into a pickle file'''
+        '''It serialises a list of Games into a pickle file'''
 
         # If the file exists I read it, otherwise I do not
         fileContent: list[Game] = []
@@ -108,6 +109,6 @@ class GameManager():
 
 
     def deserialise(self) -> list[Game]:
-        ''' It deserialises a list of Games from a pickle file'''
+        '''It deserialises a list of Games from a pickle file'''
         with open("matches.pkl", "rb") as file:
             return pickle.load(file)

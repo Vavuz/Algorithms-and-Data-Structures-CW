@@ -1,5 +1,5 @@
 '''
-This file contains the Board class
+This file contains the ReplayBoard class
 @author Marco Vavassori
 '''
 
@@ -9,16 +9,18 @@ from termcolor import colored
 import math
 
 
+
 class ReplayBoard():
     '''This class manages the game board'''
 
     def __init__(self, size: int, allCellsStatusAndContent: list[list[bool], list[int]]):
-        '''Board class constructor'''
+        '''ReplyBoard class constructor'''
         self.size: int = size
-        self.cells: list[Cell] = []
+        self.cells: list[Cell] = []    # stores the cells
         init(autoreset=True)
-        self.allCellsStatusAndContent: list[list[bool], list[int]] = allCellsStatusAndContent
+        self.allCellsStatusAndContent: list[list[bool], list[int]] = allCellsStatusAndContent    # stores the predefined cells
 
+        # Cells generation
         for i in range(0, (size ** 2)):
             cell: Cell = Cell(i, allCellsStatusAndContent[0][i], allCellsStatusAndContent[1][i])
             self.cells.append(cell)
@@ -41,7 +43,7 @@ class ReplayBoard():
                                   'H' : 8,
                                   'i' : 9,
                                   'I' : 9,
-                                }
+                                }             # dictionary of the coordinates
     
     def drawBoard(self, choice: int):
         '''Draws the board'''
@@ -108,6 +110,7 @@ class ReplayBoard():
                 newEndLineCounter = 0
                 linesCounter += 1
         
+        # Total cells remaining printing
         spacing: int = 3 if self.size == 9 else 5
         totLeft: int = 0
         for cell in self.cells:

@@ -4,9 +4,12 @@ This file contains the Game class
 '''
 
 
+
 class Game():
-    ''' This class stores a game '''
+    '''This class stores a game'''
+
     def __init__(self, name: str, size: int, moves: list[tuple[str, str]], allCellsStatusAndContent: list[list[bool], list[int]]):
+        '''Game class constructor'''
         self.name = name
         self.size = size
         self.moves = moves

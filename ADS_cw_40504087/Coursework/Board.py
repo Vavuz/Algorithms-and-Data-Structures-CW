@@ -10,6 +10,7 @@ from termcolor import colored
 import math
 
 
+
 class Board():
     '''This class manages the game board'''
 
@@ -18,10 +19,11 @@ class Board():
         self.width: int = width
         self.height: int = height
         self.choice: int = choice
-        self.cells: list[Cell] = []
+        self.cells: list[Cell] = []    # stores the cells
         init(autoreset=True)
-        self.allCellsStatusAndContent: list[list[bool], list[int]] = self.generateRiddle()
+        self.allCellsStatusAndContent: list[list[bool], list[int]] = self.generateRiddle()    # stores the predefined cells
 
+        # Cells generation
         for i in range(0, (width * height)):
             cell: Cell = Cell(i, self.allCellsStatusAndContent[0][i], self.allCellsStatusAndContent[1][i])
             self.addCell(cell)
@@ -44,7 +46,8 @@ class Board():
                                   'H' : 8,
                                   'i' : 9,
                                   'I' : 9,
-                                }
+                                }             # Dictionary of the coordinates
+    
     
     def drawBoard(self, choice: int, sudokuTimer: int):
         '''Draws the board'''
@@ -124,6 +127,7 @@ class Board():
                 newEndLineCounter = 0
                 linesCounter += 1
         
+        # Total cells remaining printing
         totLeft: int = 0
         for cell in self.cells:
             if cell.currentNumber == 0:
@@ -133,9 +137,10 @@ class Board():
 
     def generateRiddle(self) -> list[list[bool], list[int]]:
         '''Generates all the pre-written numbers in the sudoku table'''
-        gridGenerator: GridGenerator = GridGenerator(self.width, self.choice)
-        grid: list[int] = gridGenerator.getGrid()
+        gridGenerator: GridGenerator = GridGenerator(self.width, self.choice)    # the GridGenerator object will handle the algorithms
+        grid: list[int] = gridGenerator.getGrid()    # the grid with the clues
 
+        # AllCellsStatusAndContent is filled
         allCellsStatusAndContent: list[list[bool], list[int]] = [[], []]
         for number in grid:
             if number != 0:
@@ -156,7 +161,7 @@ class Board():
     
     
     def isFull(self):
-        ''' Returns true if the sudoku has been completed '''
+        '''Returns true if the sudoku has been completed'''
         for cell in self.cells:
             if cell.currentNumber == 0:
                 return False
@@ -166,15 +171,3 @@ class Board():
     def addCell(self, cell: Cell):
         '''Adds a cell to the list of cells'''
         self.cells.append(cell)
-
-    def getWidth(self) -> int:
-        '''Returns the width of the board'''
-        return self.width
-
-    def getHeight(self) -> int:
-        '''Returns the height of the board'''
-        return self.height
-    
-    def getCells(self) -> list[Cell]:
-        '''Returns the list of cells'''
-        return self.cells

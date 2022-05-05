@@ -1,10 +1,10 @@
 '''
 This file contains the Cell class
 @author Marco Vavassori
-@date 04/02/2022
 '''
 
 from termcolor import colored
+
 
 
 class Cell():
@@ -31,8 +31,3 @@ class Cell():
     def writeNumber(self, number: int):
         '''Changes the number that is currently displayed'''
         self.currentNumber = number
-
-
-    def getId(self) -> int:
-        '''Returns the id'''
-        return self.id 

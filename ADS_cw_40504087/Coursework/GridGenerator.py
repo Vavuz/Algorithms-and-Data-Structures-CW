@@ -7,11 +7,12 @@ import copy
 import random
 
 
+
 class GridGenerator():
     '''This class generates the numbers that are going to be put in the sudoku grid'''
 
     def __init__(self, size: int, choice: int):
-        '''Constructor'''
+        '''GridGenerator class constructor'''
         self.size = size
         self.choice = choice
         self.gridWithClues: list[int] = self.generateBoardWithClues()
@@ -25,10 +26,12 @@ class GridGenerator():
     def generateBoardWithClues(self) -> list[int]:
         '''Converts the grid from a 2d array to a 1d array'''
         if self.size == 9:
+            # 9x9 grid is generated, solved and partially emptied
             grid: list[list[int]] = self.generateBigPartialBoard()
             self.solveBig(grid)
             grid = self.removeNumbersBig(grid)
         else:
+            # 4x4 grid is generated, solved and partially emptied
             while True:
                 grid: list[list[int]] = self.generateSmallPartialBoard()
                 self.solveSmall(grid)
@@ -42,6 +45,7 @@ class GridGenerator():
                     break
             grid = self.removeNumbersSmall(grid)
 
+        # Converts 2d array into 1d array
         newGrid: list[int] = []
         for row in grid:
             for n in row:
@@ -64,6 +68,8 @@ class GridGenerator():
         numbers: list[int] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         startIndex: int = 0
         endIndex: int = 3
+
+        # The diagonal blocks are filled in
         for i in range(9):
             if i % 3 == 0:
                 numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -95,6 +101,8 @@ class GridGenerator():
         numbers: list[int] = [1, 2, 3, 4]
         startIndex: int = 0
         endIndex: int = 2
+        
+        # The diagonal blocks are filled in
         for i in range(4):
             if i % 2 == 0:
                 numbers = [1, 2, 3, 4]
@@ -112,7 +120,7 @@ class GridGenerator():
 
 
     def solveBig(self, fullGrid: list[list[int]]) -> bool:
-        '''Fills in the rest of the grid'''
+        '''Fills in the rest of the 9x9 grid'''
         find: tuple[int, int] | None = self.findEmpty(fullGrid)
         if find == None:
             return True
@@ -120,6 +128,7 @@ class GridGenerator():
             row: int = find[0]
             column: int = find[1]
 
+        # Trying out every number from 1 to 9 with backtracking
         for i in range(1, 10):
             if self.valid(fullGrid, i, (row, column)):
                 fullGrid[row][column] = i
@@ -131,8 +140,9 @@ class GridGenerator():
 
         return False
 
+
     def solveSmall(self, fullGrid: list[list[int]]) -> bool:
-        '''Fills in the rest of the grid'''
+        '''Fills in the rest of the 4x4 grid'''
         find: tuple[int, int] | None = self.findEmpty(fullGrid)
         if find == None:
             return True
@@ -140,6 +150,7 @@ class GridGenerator():
             row: int = find[0]
             column: int = find[1]
 
+        # Trying out every number from 1 to 4 with backtracking
         for i in range(1, 5):
             if self.valid(fullGrid, i, (row, column)):
                 fullGrid[row][column] = i
@@ -193,7 +204,7 @@ class GridGenerator():
 
 
     def removeNumbersBig(self, fullGrid: list[list[int]]) -> list[list[int]]:
-        '''Removes numbers from the complete grid'''
+        '''Removes numbers from the 9x9 complete grid'''
         counter: int = 56
         board: list = copy.deepcopy(fullGrid)
         copyBoard: list = copy.deepcopy(fullGrid)
@@ -205,6 +216,7 @@ class GridGenerator():
         elif self.choice == 2:
             counter = 46
 
+        # Removing and checking if solvable with backtracking
         while True:
             x: int = random.randint(0, 8)
             y: int = random.randint(0, 8)
@@ -223,13 +235,15 @@ class GridGenerator():
                     break
         return board
 
+
     def removeNumbersSmall(self, fullGrid: list[list[int]]) -> list[list[int]]:
-        '''Removes numbers from the complete grid'''
+        '''Removes numbers from the 4x4 complete grid'''
         counter: int = 0
         board: list = copy.deepcopy(fullGrid)
         copyBoard: list = copy.deepcopy(fullGrid)
         tempCopy: list = copy.deepcopy(fullGrid)
 
+        # Removing and checking if solvable with backtracking
         while True:
             x: int = random.randint(0, 3)
             y: int = random.randint(0, 3)
