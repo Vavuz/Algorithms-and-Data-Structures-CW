@@ -181,7 +181,7 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameM
                 move: str = str(input("\nWhat is your next move? (remember 'R' for rules, 'Q' to quit, 'U' to undo, 'RE' to redo): "))
 
                 # Rules
-                if (move == 'R' or move == 'r'):
+                if (move.lower() == 'r'):
                     if sudokuTimer < 1:
                         break
                     os.system('cls')
@@ -189,14 +189,14 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameM
                     sudokuBoard.drawBoard(choice, sudokuTimer)
                     rules()
                 # Quit
-                elif (move == 'Q' or move == 'q'):
+                elif (move.lower() == 'q'):
                     os.system('cls')
                     theme()
                     sudokuBoard.drawBoard(choice, sudokuTimer)
                     stopThread = True
                     break
                 # Undo
-                elif (move == 'U' or move == 'u'):
+                elif (move.lower() == 'u'):
                     os.system('cls')
                     theme()
                     try:
@@ -210,7 +210,7 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameM
                         sudokuBoard.drawBoard(choice, sudokuTimer)
                         print("\nThere is nothing to undo!")
                 # Redo
-                elif (move == 'RE' or move == 'Re' or move == 're'):
+                elif (move.lower() == 're'):
                     os.system('cls')
                     theme()
                     # You can only redo if the previous move was an undo, or a redo

@@ -87,7 +87,6 @@ class GridGenerator():
                 number: int = random.choice(numbers)
                 fullGrid[i][j] = number
                 numbers.remove(number)
-            
         return fullGrid
 
 
