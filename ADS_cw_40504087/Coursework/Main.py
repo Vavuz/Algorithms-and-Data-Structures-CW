@@ -34,10 +34,8 @@ def theme():
               "   \_/ \__,_| \_/ \__,_|___/___/\__,_|\__,_|\___/|_|\_\__,__|      |\n" +
               "                                                                   |\n", end="")
 
-def menu():
+def menu() -> bool:
     '''Prints the game's menu'''
-    theme()
-    print(Fore.CYAN + ' ' * 67 + Fore.CYAN + "|\n\t\t\tWelcome to Vavassudoku!" + Fore.CYAN + 20 * ' ' + "|\n" + Fore.CYAN + "-" * 67)
 
     # Game manager
     gameManager: GameManager = GameManager(0) 
@@ -48,11 +46,16 @@ def menu():
     # Play or replay
     while True:
         try:
-            print("\n\nWould you like to " + colored("play", 'yellow') + " or to " + colored("replay a match", 'green') + "?   (" + \
-                    colored("1", 'yellow') + " / " + colored("2", 'green') + "): ", end="")
+            theme()
+            print(Fore.CYAN + ' ' * 67 + Fore.CYAN + "|\n\t\t\tWelcome to Vavassudoku!" + Fore.CYAN + 20 * ' ' + "|\n" + Fore.CYAN + "-" * 67)
+            print("\n\nWould you like to " + colored("play", 'cyan') + ", " + colored("replay a match", 'yellow') + \
+                " or to " + colored("quit", 'green') + "?   (" + colored("1", 'cyan') + " / " + colored("2", 'yellow') + \
+                    " / " + colored("3", 'green') + "): ", end="")
             playOrReplay: int = int(input())
             if playOrReplay == 1:
                 # Difficulty level choice
+                os.system('cls')
+                theme()
                 # rules()
                 while True:
                     try:
@@ -66,6 +69,8 @@ def menu():
                             startGame(4, 4, choice, 0, gameManager)
                             break
                         elif choice == 2:
+                            os.system('cls')
+                            theme()
                             while True:
                                 try:
                                     print("\n\nChoose the difficulty level! " + colored("Easy", 'cyan') + ", " + colored("medium", 'yellow') + \
@@ -103,12 +108,14 @@ def menu():
                 if os.path.exists("matches.pkl"):
                     replayGame(gameManager)
                     os.system('cls')
-                    menu()
                 else:
                     print("\nYou haven't saved any match yet!")
                     time.sleep(1)
                     os.system('cls')
-            break
+            elif playOrReplay == 3:
+                return True
+            else:
+                print("That is not a option! Try again")
         except:
             print("That is not an option! Try again")
 
@@ -371,14 +378,14 @@ def replayGame(gameManager: GameManager):
     # Priting the names
     print("\n\n\nAvailable games to replay:\n")
     for i in range(len(allGames)):
-        print(i, " - " + allGames[i].name)
+        print(i, " - " + colored(allGames[i].name, 'cyan'))
 
     while True:
         try:
-            gameToReplay: str = str(input("\n\nWrite the name of the game that you would like to replay: "))
+            gameToReplay: str = str(input("\n\nWrite the " + colored("name", 'green') + " of the game that you would like to replay: "))
             for game in allGames:
                 if game.name == gameToReplay:
-                    replayLoop(gameManager.size, game.moves, game.allCellsStatusAndContent)
+                    replayLoop(game.size, game.moves, game.allCellsStatusAndContent)
                     return
             print("There is no game with such name!")
         except:
@@ -387,21 +394,56 @@ def replayGame(gameManager: GameManager):
 
 def replayLoop(size: int, moves: list[tuple[str, str]], allCellsStatusAndContent: list[list[bool], list[int]]):
     ''' Replays the game '''
-    print("porcoddio")
-    input()
+    os.system('cls')
     if size == 9:
         choice: int = 2
     else:
         choice: int = 1
-    print("the moves are: ", moves)
-    print("the numbers in the grid were: ", allCellsStatusAndContent)
+    
     replaySudokuBoard: ReplayBoard = ReplayBoard(size, allCellsStatusAndContent)
+    gameManagerReplay: GameManager = GameManager(size)
+    theme()
     replaySudokuBoard.drawBoard(choice)
+    '''
+    counter: int = -1
+    while True:
+        try:
+            backForth: str = str(input("\nType " + colored("nothing and enter", 'yellow') + " to go forward, " + \
+                                        colored("'U' and enter", 'green') + " to go backwards: "))
+            if backForth == "":
+                counter += 1
+                gameManagerReplay.move(moves[counter])
+                move: tuple[str, str] = gameManagerReplay.getRedo()
+                replaySudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], size)
+                os.system('cls')
+                replaySudokuBoard.drawBoard(choice)
+            elif backForth.lower() == 'u':
+                move: tuple[str, str] = gameManagerReplay.getUndo()
+                replaySudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], size)
+                os.system('cls')
+                replaySudokuBoard.drawBoard(choice)
+                counter -= 1
+            else:
+                print("\nThis input is not valid!")
+
+            if counter == len(moves) - 1:
+                break
+        except:
+            print("\nThis input is not valid!")
+    '''
+    
     for move in moves:
         replaySudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], size)
-        input("Press enter to see the next move...")
+        input("Press " + colored("enter", 'green') + " to see the next move...")
+        os.system('cls')
+        theme()
         replaySudokuBoard.drawBoard(choice)
-    input()
+    
+
+    input("Press enter to see the next move...")
+    os.system('cls')
+    print("\n\n\nThe replay has finished!")
+    input("\n\nPress any key to go back to the menu...")
 
 
 def gameOver(sudokuBoard: Board, gameManager: GameManager, win: bool):
@@ -430,13 +472,15 @@ def gameOver(sudokuBoard: Board, gameManager: GameManager, win: bool):
             print("This input is not valid!")
 
 
-def main():
+def main() -> bool:
     init(autoreset=True)
     stopThread = False
-    menu()
+    end: bool = menu()
     stopThread = True
+    return end
 
 
 if __name__ == "__main__":
     while True:
-        main()
+        if main():
+            break

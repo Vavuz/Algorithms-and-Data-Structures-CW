@@ -4,7 +4,6 @@ This file contains the Board class
 '''
 
 from Cell import Cell
-from GridGenerator import GridGenerator
 from colorama import Fore, init
 from termcolor import colored
 import math
@@ -71,7 +70,7 @@ class ReplayBoard():
                 horizontalCoordsCounter = 0
             else:
                 horizontalCoords += "    "      
-        print("\n\t     " + colored(horizontalCoords, 'yellow'), end="")
+        print("\n\t     " + colored(horizontalCoords, 'yellow'))
         
         # Board printing
         print("\t  " + Fore.MAGENTA + topBottomLine)
