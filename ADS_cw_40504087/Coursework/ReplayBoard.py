@@ -10,21 +10,19 @@ from termcolor import colored
 import math
 
 
-class Board():
+class ReplayBoard():
     '''This class manages the game board'''
 
-    def __init__(self, width: int, height: int, choice: int):
+    def __init__(self, size: int, allCellsStatusAndContent: list[list[bool], list[int]]):
         '''Board class constructor'''
-        self.width: int = width
-        self.height: int = height
-        self.choice: int = choice
+        self.size: int = size
         self.cells: list[Cell] = []
         init(autoreset=True)
-        self.allCellsStatusAndContent: list[list[bool], list[int]] = self.generateRiddle()
+        self.allCellsStatusAndContent: list[list[bool], list[int]] = allCellsStatusAndContent
 
-        for i in range(0, (width * height)):
-            cell: Cell = Cell(i, self.allCellsStatusAndContent[0][i], self.allCellsStatusAndContent[1][i])
-            self.addCell(cell)
+        for i in range(0, (size ** 2)):
+            cell: Cell = Cell(i, allCellsStatusAndContent[0][i], allCellsStatusAndContent[1][i])
+            self.cells.append(cell)
 
         self.coordinates: dict = {'a' : 1,
                                   'A' : 1,
@@ -46,9 +44,9 @@ class Board():
                                   'I' : 9,
                                 }
     
-    def drawBoard(self, choice: int, sudokuTimer: int):
+    def drawBoard(self, choice: int):
         '''Draws the board'''
-        lineLength: int = self.width * 5 + (choice + 2)
+        lineLength: int = self.size * 5 + (choice + 2)
         topBottomLine: str = '-' * lineLength
         internalLine: str = ""
         # The horizontal lines are created
@@ -65,41 +63,28 @@ class Board():
         horizontalCoordsCounter: int = 0
         keysList = list(self.coordinates.keys())
         # The horizontal coordinates are written from the dictionary of coordinates
-        for i in range(1, self.width * 2, 2):
+        for i in range(1, self.size * 2, 2):
             horizontalCoordsCounter += 1
             horizontalCoords += keysList[i]
-            if horizontalCoordsCounter == math.sqrt(self.width):
+            if horizontalCoordsCounter == math.sqrt(self.size):
                 horizontalCoords += "     "
                 horizontalCoordsCounter = 0
             else:
                 horizontalCoords += "    "      
         print("\n\t     " + colored(horizontalCoords, 'yellow'), end="")
-
-        # Print timer
-        seconds: str = str(sudokuTimer % 60)
-        if (int(seconds) < 10):
-            seconds = '0' + seconds
-        timeLeft: str = str(round(sudokuTimer // 60)) + ':' + str(seconds)
-        spacing: int = 3 if self.width == 9 else 5
-        if (sudokuTimer > 240):
-            print("\t" * spacing + "Time left: " + colored(timeLeft, 'green'))
-        elif (sudokuTimer > 60):
-            print("\t" * spacing + "Time left: " + colored(timeLeft, 'yellow'))
-        else:
-            print("\t" * spacing + "Time left: " + colored(timeLeft, 'red'))
         
         # Board printing
         print("\t  " + Fore.MAGENTA + topBottomLine)
         print("\t", end="")
         newEndLineCounter: int = 0
         linesCounter: int = 1
-        verticalCoordsCounter: int = math.sqrt(self.width)
+        verticalCoordsCounter: int = math.sqrt(self.size)
         verticalCoords: int = 1
         # Every cell needs to be printed
         for cell in self.cells:
-            if (newEndLineCounter % math.sqrt(self.width) == 0):
+            if (newEndLineCounter % math.sqrt(self.size) == 0):
                 # When we get to a new  line
-                if verticalCoordsCounter == math.sqrt(self.width):
+                if verticalCoordsCounter == math.sqrt(self.size):
                     print(colored(str(verticalCoords), 'yellow') + " " + Fore.MAGENTA + "|", end="")
                     verticalCoordsCounter = 1
                     verticalCoords += 1
@@ -110,12 +95,12 @@ class Board():
             cell.drawCell()    # cell printing
             newEndLineCounter += 1
             # Divider lines printing
-            if newEndLineCounter == self.width:
-                if (linesCounter % math.sqrt(self.width) == 0 and linesCounter != 0 and linesCounter != self.height):
+            if newEndLineCounter == self.size:
+                if (linesCounter % math.sqrt(self.size) == 0 and linesCounter != 0 and linesCounter != self.size):
                     print(Fore.MAGENTA + "|\n", end="")
                     print("\t  " + Fore.MAGENTA + internalLine)
                     print("\t", end="")
-                elif (linesCounter == self.height):
+                elif (linesCounter == self.size):
                     print(Fore.MAGENTA + "|\n", end="")
                     print("\t  " + Fore.MAGENTA + topBottomLine)
                 else:
@@ -124,57 +109,17 @@ class Board():
                 newEndLineCounter = 0
                 linesCounter += 1
         
+        spacing: int = 3 if self.size == 9 else 5
         totLeft: int = 0
         for cell in self.cells:
             if cell.currentNumber == 0:
                 totLeft += 1
-        print("\t     " + " " * self.width * 5 + "\t" * spacing + "Completed: " + Fore.CYAN + str(len(self.cells) - totLeft) + " / " +  str(len(self.cells)))
-    
-
-    def generateRiddle(self) -> list[list[bool], list[int]]:
-        '''Generates all the pre-written numbers in the sudoku table'''
-        gridGenerator: GridGenerator = GridGenerator(self.width, self.choice)
-        grid: list[int] = gridGenerator.getGrid()
-
-        allCellsStatusAndContent: list[list[bool], list[int]] = [[], []]
-        for number in grid:
-            if number != 0:
-                allCellsStatusAndContent[0].append(False)
-            else:
-                allCellsStatusAndContent[0].append(True)
-            allCellsStatusAndContent[1].append(number)
-
-        return allCellsStatusAndContent
+        print("\t     " + " " * self.size * 5 + "\t" * spacing + "Completed: " + Fore.CYAN + str(len(self.cells) - totLeft) + " / " +  str(len(self.cells)))
 
     
-    def boardUpdate(self, x: str, y: str, number: int, width: int):
+    def boardUpdate(self, x: str, y: str, number: int, size: int):
         '''Updates the board'''
         for cell in self.cells:
-            if cell.id == (self.coordinates[x] + (width * (int(y) - 1)) - 1):
+            if cell.id == (self.coordinates[x] + (size * (int(y) - 1)) - 1):
                 cell.writeNumber(number)
                 break
-    
-    
-    def isFull(self):
-        ''' Returns true if the sudoku has been completed '''
-        for cell in self.cells:
-            if cell.currentNumber == 0:
-                return False
-        return True
-
-
-    def addCell(self, cell: Cell):
-        '''Adds a cell to the list of cells'''
-        self.cells.append(cell)
-
-    def getWidth(self) -> int:
-        '''Returns the width of the board'''
-        return self.width
-
-    def getHeight(self) -> int:
-        '''Returns the height of the board'''
-        return self.height
-    
-    def getCells(self) -> list[Cell]:
-        '''Returns the list of cells'''
-        return self.cells

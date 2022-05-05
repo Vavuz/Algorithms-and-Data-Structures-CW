@@ -4,10 +4,13 @@ This file is the main file for the Sudoku game
 '''
 
 from Board import Board
+from Game import Game
+from ReplayBoard import ReplayBoard
 import threading
 import time
 import os
-from colorama import Fore
+from colorama import Fore, init
+from termcolor import colored
 from GameManager import GameManager
 
 
@@ -34,8 +37,10 @@ def theme():
 def menu():
     '''Prints the game's menu'''
     theme()
-    print(" " * 67 + "|\n\t\t\tWelcome to Vavassudoku!" + 20 * ' ' + "|\n",
-    "-" * 67)
+    print(Fore.CYAN + ' ' * 67 + Fore.CYAN + "|\n\t\t\tWelcome to Vavassudoku!" + Fore.CYAN + 20 * ' ' + "|\n" + Fore.CYAN + "-" * 67)
+
+    # Game manager
+    gameManager: GameManager = GameManager(0) 
 
     # Global variables setting
     global sudokuTimer
@@ -43,33 +48,44 @@ def menu():
     # Play or replay
     while True:
         try:
-            playOrReplay: int = int(input("Would you like to play or to replay a match?   (1 / 2): "))
+            print("\n\nWould you like to " + colored("play", 'yellow') + " or to " + colored("replay a match", 'green') + "?   (" + \
+                    colored("1", 'yellow') + " / " + colored("2", 'green') + "): ", end="")
+            playOrReplay: int = int(input())
             if playOrReplay == 1:
                 # Difficulty level choice
                 # rules()
                 while True:
                     try:
-                        choice: int = int(input("\n\nChoose the grid's size! 4x4 or 9x9   (1 / 2): "))
+                        print("\n\nChoose the grid's size! " + colored("4x4", 'yellow') + " or " + colored("9x9", 'green') + \
+                                "   (" + colored("1", 'yellow') + " / " + colored("2", 'green') + "): ", end="")
+                        choice: int = int(input())
                         # Whenever the input is an integer
                         if (choice == 1):
                             sudokuTimer = 361
-                            startGame(4, 4, choice, 0)
+                            gameManager: GameManager = GameManager(4) 
+                            startGame(4, 4, choice, 0, gameManager)
                             break
                         elif choice == 2:
                             while True:
                                 try:
-                                    secondChoice: int = int(input("\n\nChoose the difficulty level! 1(easy)/ 2(medium)/ 3(difficult): "))
+                                    print("\n\nChoose the difficulty level! " + colored("Easy", 'cyan') + ", " + colored("medium", 'yellow') + \
+                                            " or " + colored("difficult", 'green') + "   (" + colored("1", 'cyan') + " / " + \
+                                                colored("2", 'yellow') + " / " + colored("3", 'green') + "): ", end="")
+                                    secondChoice: int = int(input())
                                     if secondChoice == 1:
                                         sudokuTimer = 1081
-                                        startGame(9, 9, choice, secondChoice)
+                                        gameManager: GameManager = GameManager(9) 
+                                        startGame(9, 9, choice, secondChoice, gameManager)
                                         break
                                     elif secondChoice == 2:
                                         sudokuTimer = 781
-                                        startGame(9, 9, choice, secondChoice)
+                                        gameManager: GameManager = GameManager(9) 
+                                        startGame(9, 9, choice, secondChoice, gameManager)
                                         break
                                     elif secondChoice == 3:
                                         sudokuTimer = 481
-                                        startGame(9, 9, choice, secondChoice)
+                                        gameManager: GameManager = GameManager(9)
+                                        startGame(9, 9, choice, secondChoice, gameManager)
                                         break
                                     else:
                                         print(str(secondChoice) + " is not an option! Try again!")
@@ -82,9 +98,17 @@ def menu():
                     except:
                         print("That is not a choice! Try again!")
                 break
-            else:
+            elif playOrReplay == 2:
                 #replay
-                print("NOT YET IMPLEMENTED!")
+                if os.path.exists("matches.pkl"):
+                    replayGame(gameManager)
+                    os.system('cls')
+                    menu()
+                else:
+                    print("\nYou haven't saved any match yet!")
+                    time.sleep(1)
+                    os.system('cls')
+            break
         except:
             print("That is not an option! Try again")
 
@@ -93,22 +117,26 @@ def rules():
     print("\n\n▬▬ι═══════   The rules   ═══════ι▬▬")
     time.sleep(0.5)
     print("\n The rules are very simple: \n")
-    time.sleep(1.5)
+    time.sleep(1)
     print("   To insert a number into the sudoku table you will need to provide the console\n",
-          "  with a coordinate (e.g. 'B3', 'e7', 'H9'), a comma ',' and a number (e.g. '1', '5', '8')\n")
-    time.sleep(1.5)
-    print("   Your input should look like that:   D4,2\n")
-    time.sleep(1.5)
-    print("   Whenever you want to read the rules, input 'R'\n")
-    time.sleep(1.5)
-    print("   Whenever you want to quit, input 'Q'\n")
-    time.sleep(1.5)
+          "  with a " + colored("coordinate", 'green') + " (e.g. 'B3', 'e7', 'H9'), a " + colored("comma", 'green') + " ',' and the " + colored("number to insert", 'green') + " (e.g. '1', '5', '8')\n")
+    time.sleep(1)
+    print("   Your input should look like that:   " + colored("D4,2", 'cyan') + "\n")
+    time.sleep(1)
+    print("   If you think you have done something wrong don't worry! Input " + colored("'U'", 'yellow') + " to undo and " + colored("'RE'", 'yellow') + " to redo")
+    time.sleep(1)
+    print("   Whenever you want to read the rules, input " + colored("'R'", 'yellow') + "")
+    time.sleep(1)
+    print("   Whenever you want to quit, input " + colored("'Q'", 'yellow') + "\n")
+    time.sleep(1)
+    print("   At the top right you can see the " + colored("time left", 'green') + ", at the bottom right the " + colored("cells left", 'green') + " to fill in\n")
+    time.sleep(2)
     print(" Now that you know the rules you can start playing!\n\n",
         "▬▬ι═══════════════════════════ι▬▬")
     time.sleep(1.5)
 
 
-def startGame(width: int, height: int, choice: int, secondChoice: int):
+def startGame(width: int, height: int, choice: int, secondChoice: int, gameManager: GameManager):
     '''Draws the sudoku board'''
     sudokuBoard: Board = Board(width, height, secondChoice)
     os.system('cls')
@@ -118,21 +146,23 @@ def startGame(width: int, height: int, choice: int, secondChoice: int):
     countdownThread.start()
     # Board management
     sudokuBoard.drawBoard(choice, sudokuTimer)
-    movementLoop(sudokuBoard, width, choice)
+    movementLoop(sudokuBoard, width, choice, gameManager)
 
 
-def movementLoop(sudokuBoard: Board, width: int, choice: int):
+def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameManager):
     '''Applies the user moves'''
     # Global variables setting
     global sudokuTimer
     global stopThread
     stopThread = False
     undoPressed: bool = False
-    gameManager: GameManager = GameManager() 
 
     while sudokuTimer > 0:
         while True:
             try:
+                if sudokuBoard.isFull():
+                    break
+
                 move: str = str(input("\nWhat is your next move?: "))
 
                 # Rules
@@ -218,9 +248,18 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int):
                 sudokuBoard.drawBoard(choice, sudokuTimer)
                 print("\nThe input is not valid! Remember: <cell_coordinates>,<number>\n e.g. B3,4")
         break
+
+    # Output for when the timer has reached 0
     if sudokuTimer < 1:
         os.system('cls')
         print("\nTIME IS OUT!!!")
+        time.sleep(2)
+
+    # Output of the end of the game
+    if sudokuBoard.isFull():
+        gameOver(sudokuBoard, gameManager, win=True)
+    else:
+        gameOver(sudokuBoard, gameManager, win=False)
 
 
 def moveValidation(moveTuple: tuple, width: int) -> bool:
@@ -324,9 +363,80 @@ def editableValidation(sudokuBoard: Board, moveTuple: tuple, width: int) -> bool
                 return False
 
 
+def replayGame(gameManager: GameManager):
+    ''' Sets up the game's replaying'''
+    os.system('cls')
+    allGames: list[Game] = gameManager.deserialise()
 
-if __name__ == "__main__":
+    # Priting the names
+    print("\n\n\nAvailable games to replay:\n")
+    for i in range(len(allGames)):
+        print(i, " - " + allGames[i].name)
+
+    while True:
+        try:
+            gameToReplay: str = str(input("\n\nWrite the name of the game that you would like to replay: "))
+            for game in allGames:
+                if game.name == gameToReplay:
+                    replayLoop(gameManager.size, game.moves, game.allCellsStatusAndContent)
+                    return
+            print("There is no game with such name!")
+        except:
+            print("The input is not valid!")
+
+
+def replayLoop(size: int, moves: list[tuple[str, str]], allCellsStatusAndContent: list[list[bool], list[int]]):
+    ''' Replays the game '''
+    print("porcoddio")
+    input()
+    if size == 9:
+        choice: int = 2
+    else:
+        choice: int = 1
+    print("the moves are: ", moves)
+    print("the numbers in the grid were: ", allCellsStatusAndContent)
+    replaySudokuBoard: ReplayBoard = ReplayBoard(size, allCellsStatusAndContent)
+    replaySudokuBoard.drawBoard(choice)
+    for move in moves:
+        replaySudokuBoard.boardUpdate(move[0][:1], move[0][1:], move[1], size)
+        input("Press enter to see the next move...")
+        replaySudokuBoard.drawBoard(choice)
+    input()
+
+
+def gameOver(sudokuBoard: Board, gameManager: GameManager, win: bool):
+    ''' It manages the end of the game, so saving games '''
+    if win:
+        os.system('cls')
+        print(colored("\n\nYOU WON!", 'green'))
+    else:
+        os.system('cls')
+        print(colored("\n\nYOU LOST", 'red'))
+    
+    # Choice of saving the game
+    while True:
+        try:
+            save: str = str(input("\n\nWould you like to save this game?   y/n: "))
+            if save.lower() == "y":
+                gameManager.serialise(sudokuBoard.allCellsStatusAndContent)
+                os.system('cls')
+                break
+            elif save.lower() == "n":
+                os.system('cls')
+                break
+            else:
+                print("This input is not valid!")
+        except:
+            print("This input is not valid!")
+
+
+def main():
+    init(autoreset=True)
     stopThread = False
     menu()
     stopThread = True
-    input("\n\n Enter key to escape...")
+
+
+if __name__ == "__main__":
+    while True:
+        main()
