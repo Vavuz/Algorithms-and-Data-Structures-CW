@@ -21,6 +21,10 @@ Before playing Vavassudoku you need to be sure that you have read the following:
 
 3. Demonstration video
   To see a demonstration video you can follow this link: https://youtu.be/QCf04x0co7s
+
+4. GitHub repository
+  To see the implementation history, or to download the code, visit my GitHub repository
+  at: https://github.com/Vavuz/Algorithms_and_Data_Structures_Coursework/tree/master/ADS_cw_40504087/Coursework
   
 
 You are now ready to play! Double click Main.py!
