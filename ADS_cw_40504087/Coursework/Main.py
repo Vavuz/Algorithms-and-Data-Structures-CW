@@ -138,7 +138,7 @@ def rules():
     time.sleep(1)
     print("   If you think you have done something wrong don't worry! Input " + colored("'U'", 'yellow') + " to undo and " + colored("'RE'", 'yellow') + " to redo")
     time.sleep(1)
-    print("   Whenever you want to read the rules, input " + colored("'R'", 'yellow') + "")
+    print("   Whenever you need help and want to see the rules, input " + colored("'H'", 'yellow') + "")
     time.sleep(1)
     print("   Whenever you want to quit, input " + colored("'Q'", 'yellow') + "\n")
     time.sleep(1)
@@ -178,10 +178,10 @@ def movementLoop(sudokuBoard: Board, width: int, choice: int, gameManager: GameM
                 if sudokuBoard.isFull():
                     break
 
-                move: str = str(input("\nWhat is your next move? (remember 'R' for rules, 'Q' to quit, 'U' to undo, 'RE' to redo): "))
+                move: str = str(input("\nWhat is your next move? ('H' for help): "))
 
                 # Rules
-                if (move.lower() == 'r'):
+                if (move.lower() == 'h'):
                     if sudokuTimer < 1:
                         break
                     os.system('cls')
@@ -390,7 +390,7 @@ def replayGame(gameManager: GameManager):
     # Priting the names
     print("\n\n\nAvailable games to replay:\n")
     for i in range(len(allGames)):
-        print(i, " - " + colored(allGames[i].name, 'cyan'))
+        print(i + 1, " - " + colored(allGames[i].name, 'cyan'))
 
     while True:
         try:
@@ -427,7 +427,7 @@ def replayLoop(size: int, moves: list[tuple[str, str]], allCellsStatusAndContent
         replaySudokuBoard.drawBoard(choice)
     
     # End of replay
-    input("Press enter to see the next move...")
+    input("Press " + colored("enter", 'green') + " to see the next move...")
     os.system('cls')
     print("\n\n\nThe replay has finished!")
     input("\n\nPress any key to go back to the menu...")
